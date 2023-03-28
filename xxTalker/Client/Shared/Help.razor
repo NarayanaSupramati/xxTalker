@@ -1,0 +1,234 @@
+﻿<MudDialog>
+    <DialogContent>
+
+        <MudTabs @ref="tabs" Rounded="true" ApplyEffectsToContainer="true" Color="@Color.Primary">
+            <MudTabPanel Text="How can be used">
+                <MudGrid Class="my-0">
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.body1">
+                            <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                            <span style="color:@Colors.Orange.Default;">Validators</span> can introduce themselves and <MudLink OnClick="() => Activate(2)">update information</MudLink> on the node's
+                            conditions or operation to gain attention and build trust with other network participants.
+                        </MudText>
+                        <MudText Typo="Typo.body1" Class="my-2">
+                            <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                            <span style="color:@Colors.Orange.Default;">Nominators</span> can leave reviews and <MudLink OnClick="() => Activate(3)">ratings</MudLink> to assist other nominators in their
+                            search for trustworthy nodes to support, promoting transparency and reliability in the network.
+                        </MudText>
+                        <MudText Typo="Typo.body1">
+                            <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                            For <span style="color:@Colors.Orange.Default;">anyone</span> who seeking to connect with others of the network or leave any useful information.
+                        </MudText>
+                    </MudItem>
+                </MudGrid>
+            </MudTabPanel>
+            
+            <MudTabPanel Text="Message signing">
+                <MudText Typo="Typo.body1" Class="mt-3">
+                    <MudIcon Icon="@Icons.Material.Filled.Info" Style="vertical-align:bottom;" />
+                    By using signature on the message the identity of the sender and the
+                    <span style="color:@Colors.Orange.Default;">authenticity of the message</span>
+                    can be confirmed, and therefore the sender of the message is unable to deny (or repudiate) the sending of that message.
+                </MudText>
+                <MudGrid Class="my-0">
+                    <MudItem xs="12">
+                        <MudCard>
+                            <MudImage Fluid="true" Src="images/sign1.png" Alt="sign1" Class="rounded-sm" />
+                            <MudCardContent>
+                                <MudText Typo="Typo.body1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                                    On the xx web wallet page, select <b>Developer</b> from the menu, then <b>Sign and verify</b>.
+                                </MudText>
+                                <MudText Typo="Typo.body1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                                    Or use the direct link <MudLink Href="https://wallet.xx.network/#/signing">https://wallet.xx.network/#/signing</MudLink>
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudCard>
+                            <MudImage Fluid="true" Src="images/sign2.png" Alt="sign2" Class="rounded-sm" />
+                            <MudCardContent>
+                                <MudText Typo="Typo.body1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                                    Select the <b>account</b> that will sign messages, then click <b>Unlock account</b>.
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudCard>
+                            <MudImage Fluid="true" Src="images/sign3.png" Alt="sign3" Class="rounded-sm" />
+                            <MudCardContent>
+                                <MudText Typo="Typo.body1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                                    To get the <b>signature</b> of the provided message, click <b>Sign message</b>.
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                </MudGrid>
+                <MudText Typo="Typo.body1" Class="mb-1">
+                    <MudIcon Icon="@Icons.Material.Filled.Info" Style="vertical-align:bottom;" />
+                    Now you know how to sign messages and further when using the application, you will need 3 things:
+                    the <span style="color:@Colors.Orange.Default;">account</span> address, the <span style="color:@Colors.Orange.Default;">message</span> and its <span style="color:@Colors.Orange.Default;">signature</span>.
+                </MudText>
+            </MudTabPanel>
+
+            <MudTabPanel Text="Update information">
+                <MudText Typo="Typo.body1" Class="mt-3">
+                    <MudIcon Icon="@Icons.Material.Filled.Info" Style="vertical-align:bottom;" />
+                    In this guide, you will learn how to update the <span style="color:@Colors.Orange.Default;">information block</span> for your account.
+                </MudText>
+                <MudGrid Class="my-0">
+                    <MudItem xs="12">
+                        <MudCard>
+                            <MudImage Fluid="true" Src="images/info1.png" Alt="info1" Class="rounded-sm" />
+                            <MudCardContent>
+                                <MudText Typo="Typo.body1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                                    Enter your <b>account</b> address and click the <b>search</b> button, which should display your account information.
+                                </MudText>
+                                <MudText Typo="Typo.body1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                                    Click the <b>eye</b> icon to go to your account page.
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudCard>
+                            <MudImage Fluid="true" Src="images/info2.png" Alt="info2" Class="rounded-sm" />
+                            <MudCardContent>
+                                <MudText Typo="Typo.body1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                                    Click the <b>Update Info</b> button to display the data entry form.
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudCard>
+                            <MudImage Fluid="true" Src="images/info3.png" Alt="info3" Class="rounded-sm" />
+                            <MudCardContent>
+                                <MudText Typo="Typo.body1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                                    In the form, enter the required information and the corresponding <MudLink OnClick="() => Activate(1)">signature</MudLink>, then click <b>Send</b> to make changes.
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudCard>
+                            <MudImage Fluid="true" Src="images/info4.png" Alt="info4" Class="rounded-sm" />
+                            <MudCardContent>
+                                <MudText Typo="Typo.body1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                                    The result will be the display of an <b>information block</b> that will be visible when <b>searching</b> or directly on the account page.
+                                </MudText>
+                                <MudText Typo="Typo.body1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                                    Each new information change will generate a message about it, which is visible in the list of all messages. To <b>hide obsolete</b> information, use the message <b>filter</b>.
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                </MudGrid>
+                <MudText Typo="Typo.body1" Class="mb-1">
+                    <MudIcon Icon="@Icons.Material.Filled.Info" Style="vertical-align:bottom;" />
+                    To <span style="color:@Colors.Orange.Default;">clear</span> the information block, you must <span style="color:@Colors.Orange.Default;">send an empty</span> signed message.
+                </MudText>
+            </MudTabPanel>
+
+            <MudTabPanel Text="Give a rating">
+                <MudText Typo="Typo.body1" Class="mt-3">
+                    <MudIcon Icon="@Icons.Material.Filled.Info" Style="vertical-align:bottom;" />
+                    In this guide, you will learn how to <span style="color:@Colors.Orange.Default;">rate</span> an account.
+                </MudText>
+                <MudGrid Class="my-0">
+                    <MudItem xs="12">
+                        <MudCard>
+                            <MudImage Fluid="true" Src="images/rate1.png" Alt="rate1" Class="rounded-sm" />
+                            <MudCardContent>
+                                <MudText Typo="Typo.body1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                                    Enter the address of the <b>account</b> you are interested in and click the <b>search</b> button, which should display the account information.
+                                </MudText>
+                                <MudText Typo="Typo.body1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                                    Click the <b>Add Message</b> button to display the data entry form.
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudCard>
+                            <MudImage Fluid="true" Src="images/rate2.png" Alt="rate2" Class="rounded-sm" />
+                            <MudCardContent>
+                                <MudText Typo="Typo.body1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                                    Enter your account address, a message that <b>explains the reason</b> for your rating, a <MudLink OnClick="() => Activate(1)">signature</MudLink>, and finally the rating itself, then click <b>Send</b> to make changes.
+                                </MudText>
+                                <MudText Typo="Typo.body1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                                    To be able to rate, do not forget to <b>activate the switch</b>.
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudCard>
+                            <MudImage Fluid="true" Src="images/rate3.png" Alt="rate3" Class="rounded-sm" />
+                            <MudCardContent>
+                                <MudText Typo="Typo.body1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                                    The result will be a new <b>message with a rating</b>.
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudCard>
+                            <MudImage Fluid="true" Src="images/rate4.png" Alt="rate4" Class="rounded-sm" />
+                            <MudCardContent>
+                                <MudText Typo="Typo.body1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                                    Now, when <b>searching</b> or on the account page, you can see the <b>rating</b>.
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudCard>
+                            <MudImage Fluid="true" Src="images/rate5.png" Alt="rate5" Class="rounded-sm" />
+                            <MudCardContent>
+                                <MudText Typo="Typo.body1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Style="vertical-align:bottom;" />
+                                    To <b>avoid abuse</b> for the same sender, when adding a rating again, the <b>previous value is not taken</b> into account.
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                </MudGrid>
+                <MudText Typo="Typo.body1" Class="mb-1">
+                    <MudIcon Icon="@Icons.Material.Filled.Info" Style="vertical-align:bottom;" />
+                    You cannot rate your account.
+                </MudText>
+            </MudTabPanel>
+        </MudTabs>
+
+    </DialogContent>
+</MudDialog>
+
+@code
+{
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    MudTabs tabs;
+
+    void Activate(int index)
+    {
+        tabs.ActivatePanel(index);
+    }
+}

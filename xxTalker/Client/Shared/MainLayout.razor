@@ -1,0 +1,63 @@
+﻿@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
+@inject IDialogService DialogService
+
+<MudThemeProvider @bind-IsDarkMode="@isDarkMode" Theme="theme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudContainer Class="px-8 pt-4 mb-n12 d-flex justify-space-between align-center" MaxWidth="MaxWidth.Large">
+        <MudItem Class="">
+            <MudSwitch @bind-Checked="@isDarkMode" Color="Color.Primary" T="bool">
+                @(isDarkMode ? "Light Mode" : "Dark Mode")
+            </MudSwitch>
+        </MudItem>
+        <MudItem Class="">
+            <MudIconButton OnClick="ShowHelp" Icon="@Icons.Material.Filled.QuestionMark" Color="Color.Primary"></MudIconButton>
+            <MudIconButton Href="https://github.com/NarayanaSupramati" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary"></MudIconButton>
+        </MudItem>
+    </MudContainer>
+    <MudMainContent>
+        <CascadingValue Value="@isDarkMode">
+            @Body
+        </CascadingValue>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private MudTheme theme = new();
+    private bool isDarkMode;
+    private bool isShownHelp;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "DarkMode", isDarkMode);
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "ShowHelp", true);
+
+        if (firstRender && !isShownHelp)
+        {
+            var options = new DialogOptions() { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true, NoHeader = true };
+            await DialogService.ShowAsync<Help>(string.Empty, options);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        string strDarkMode = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "DarkMode");
+        if (!string.IsNullOrEmpty(strDarkMode))
+            isDarkMode = bool.Parse(strDarkMode.Replace("'", string.Empty));
+
+        string strShowHelp = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "ShowHelp");
+        if (!string.IsNullOrEmpty(strShowHelp))
+            isShownHelp = bool.Parse(strShowHelp.Replace("'", string.Empty));
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task ShowHelp()
+    {
+        var options = new DialogOptions() { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true, NoHeader = true };
+        await DialogService.ShowAsync<Help>(string.Empty, options);
+    }
+}

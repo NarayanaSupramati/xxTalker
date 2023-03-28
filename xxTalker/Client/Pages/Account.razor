@@ -1,0 +1,580 @@
+﻿@page "/account/{accountId}"
+@using System.Globalization;
+@using System.Text.RegularExpressions
+@using System.Text.Json
+@using System.Numerics
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject HttpClient HttpClient
+@inject IHttpClientFactory ClientFactory
+
+@inject IJSRuntime JSRuntime
+
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager Navigation
+@implements IAsyncDisposable
+
+<PageTitle>@($"xxTalker < Account")</PageTitle>
+
+<MudContainer Class="px-8" MaxWidth="MaxWidth.Large">
+    <MudGrid>
+        <MudItem xs="12">
+            <MudText Typo="Typo.h2" Align="Align.Center" Class="mb-4">
+                <MudIconButton Href="/" Icon="@Icons.Material.Filled.ArrowBack" Color="Color.Primary" Size="Size.Large" Class="ml-n15"></MudIconButton>
+                Account Information
+            </MudText>
+
+            <MudCard Class="@(showSkeleton?"":"d-none")">
+                <MudCardContent Class="relative">
+                    <MudOverlay Visible="true" LightBackground="!isDarkMode" DarkBackground="isDarkMode" Absolute="true">
+                        <MudProgressCircular Color="Color.Secondary" Size="Size.Large" Indeterminate="true" />
+                    </MudOverlay>
+                    <MudSkeleton Width="50%" Height="42px;" />
+                    <MudSkeleton Width="70%" />
+                    <MudSkeleton Width="100%" />
+                    <MudSkeleton Width="110px" Height="40px" />
+                </MudCardContent>
+            </MudCard>
+
+            <MudCard Class="@(showAccountData?"":"d-none")">
+                <MudCardContent Class="relative">
+                    <MudOverlay Visible="showUpdateLoader" LightBackground="!isDarkMode" DarkBackground="isDarkMode" Absolute="true">
+                        <MudProgressCircular Color="Color.Secondary" Size="Size.Large" Indeterminate="true" />
+                    </MudOverlay>
+                    <MudText Typo="Typo.h5" Style="word-break: break-all;">
+                        @xxAccount?.id
+                    </MudText>
+                    <MudText Typo="Typo.h6" Style="word-break: break-all;font-weight: 100;" Class="@(string.IsNullOrEmpty(xxAccount?.identity?.display) ? "d-none" : "")">
+                        @xxAccount?.identity?.display
+                    </MudText>
+                    <MudText Typo="Typo.body2" Class="d-inline" Style="font-weight: 100;">
+                        Role: <b>@GetRole(xxAccount)</b>
+                        &nbsp;&nbsp;
+                    </MudText>
+                    <MudText Typo="Typo.body2" Class="d-inline" Style="font-weight: 100;">
+                        Balance: <b>@GetFormattedBalance().Item1</b>@GetFormattedBalance().Item2
+                        &nbsp;&nbsp;
+                    </MudText>
+                    <MudText Typo="Typo.body2" Class="d-inline" Style="font-weight: 100;">
+                        Messages:
+                        <MudProgressCircular Color="Color.Secondary" Size="Size.Small" Indeterminate="true" Class="@(showLoader ? "" : "d-none")" Style="height:0.8em;width:0.8em;" />
+                        <MudElement HtmlTag="b" Class="@(showLoader ? "d-none" : "")">
+                            @(talker != null && talker.Messages.Any() ? talker.Messages.Count(m => m.MessageType != MessageType.Info) : 0)
+                        </MudElement>
+                    </MudText>
+                    <MudText Typo="Typo.body1" Class="@(string.IsNullOrEmpty(talker?.Info) ? "d-none" : "mt-4")">
+                        <MudIcon Icon="@Icons.Material.Outlined.Info" Size="Size.Small" Color="Color.Default" Style="vertical-align: text-bottom;" />
+                        @talker?.Info
+                    </MudText>
+                    <div class="d-flex flex-grow-1 gap-2 flex-wrap align-center justify-end">
+                        <div class="pt-2">
+                            <MudRating ReadOnly="true" SelectedValue="@(talker == null ? 0 : talker.RatingInt)" Disabled="@(talker == null || talker.Rating == "0.00")" />
+                        </div>
+                        <div class="flex-grow-1 pt-2">
+                            <MudText Typo="Typo.button">@(talker == null || talker.Rating == "0.00" ? "" : talker.Rating)</MudText>
+                        </div>
+                        <div>
+                            <MudButton Variant="Variant.Text" Size="Size.Large" StartIcon="@Icons.Material.Outlined.Info" Color="Color.Primary" OnClick="GetInfoDialogAsync">
+                                Update Info
+                            </MudButton>
+                            <MudButton Variant="Variant.Text" Size="Size.Large" StartIcon="@Icons.Material.Outlined.Message" Color="Color.Primary" OnClick="GetMessageDialogAsync">
+                                Add message
+                            </MudButton>
+                        </div>
+                    </div>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="12">
+            <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined" Class="@(showNotFound ? "" : "d-none")">
+                Account not found
+            </MudAlert>
+            <MudAlert Severity="Severity.Error" Variant="Variant.Outlined" Class="@(string.IsNullOrEmpty(errorMessage) ? "d-none" : "")">
+                @errorMessage
+            </MudAlert>
+        </MudItem>
+
+        <MudItem xs="12" Style="text-align:center;">
+            <MudText Typo="Typo.h5" Align="Align.Center" GutterBottom="true" Style="font-weight: lighter;">
+                MESSAGES
+            </MudText>
+            <MudText Typo="Typo.h6" Align="Align.Center" GutterBottom="true" Style="font-weight: lighter;">
+                filter:
+                <MudToggleIconButton @bind-Toggled="@filterObsolete" Size="Size.Small" ToggledSize="Size.Small"
+                                    Icon="@Icons.Material.Filled.SubtitlesOff" Color="@Color.Primary" Title="Hide obsolete"
+                                    ToggledIcon="@Icons.Material.Filled.Subtitles" ToggledColor="@Color.Warning" ToggledTitle="Show obsolete" />
+                <MudToggleIconButton @bind-Toggled="@filterRating" Size="Size.Small" ToggledSize="Size.Small"
+                                    Icon="@Icons.Material.Filled.StarBorder" Color="@Color.Primary" Title="Show rating"
+                                    ToggledIcon="@Icons.Material.Filled.Star" ToggledColor="@Color.Warning" ToggledTitle="Hide rating" />
+            </MudText>
+            <MudProgressLinear Color="Color.Secondary" Indeterminate="true" Class="@(showLoader ? "" : "d-none")" />
+        </MudItem>
+        @if (talker != null)
+        {
+            foreach (var msg in talker.Messages.OrderByDescending(o => o.MessageDate))
+            {
+                bool isObsoleteInfo = false;
+                if (msg.MessageType == MessageType.Info)
+                {
+                    var lastInfo = talker.Messages.OrderByDescending(o => o.MessageDate).FirstOrDefault(m => m.MessageType == MessageType.Info);
+                    if (msg != lastInfo)
+                    {
+                        isObsoleteInfo = true;
+                    }
+                }
+                bool isObsoleteRate = false;
+                var sendersRateList = talker.Messages.GroupBy(g => g.SenderAccount).Select(group => new { Sender = group.Key, LastRate = group.OrderByDescending(o => o.MessageDate).FirstOrDefault(m => m.MessageType == MessageType.Rating) });
+                if (msg.MessageType == MessageType.Rating)
+                {
+                    if (sendersRateList.Any(s => s.Sender == msg.SenderAccount && s.LastRate != msg))
+                    {
+                        isObsoleteRate = true;
+                    }
+                }
+                var own = msg.SenderAccount == null || msg.SenderAccount == msg.ReceiverAccount;
+                var ava = "H";
+                if (own && !string.IsNullOrEmpty(msg.ReceiverRole))
+                {
+                    var roles = msg.ReceiverRole.Split(",").Select(r => r.Trim());
+                    ava = roles.Contains("Validator") ? "V" : (roles.Contains("Nominator") ? "N" : "H");
+                }
+                else if (!own && !string.IsNullOrEmpty(msg.SenderRole))
+                {
+                    var roles = msg.SenderRole.Split(",").Select(r => r.Trim());
+                    ava = roles.Contains("Validator") ? "V" : (roles.Contains("Nominator") ? "N" : "H");
+                }
+                var crown = @"
+        <svg style=""width:1em;height:1em;"" viewBox=""0 0 24 24"" fill=""none"" xmlns=""http://www.w3.org/2000/svg"">
+        <path d=""M4 19H20M4 5V16H20V5L16 9L12 5L8 9L4 5Z"" stroke=""#ffffff"" stroke-width=""2.0"" stroke-linecap=""round"" stroke-linejoin=""round""/>
+        </svg>";
+                <MudItem md="6" xs="12" Class="@(filterObsolete && (isObsoleteInfo || isObsoleteRate) || filterRating && msg.MessageType != MessageType.Rating ? "d-none" : "")">
+                    <MudCard Class="relative">
+                        <MudOverlay Visible="isObsoleteInfo || isObsoleteRate" LightBackground="!isDarkMode" DarkBackground="isDarkMode" Absolute="true">
+                        </MudOverlay>
+                        <MudCardHeader Class="pb-0">
+                            <CardHeaderAvatar>
+                                @if (own)
+                                {
+                                    <MudAvatar Color="@(ava == "H" ? Color.Surface : (ava == "V" ? Color.Success : Color.Info))">
+                                        <MudIcon Icon="@crown" />
+                                    </MudAvatar>
+                                }
+                                else
+                                {
+                                    <MudAvatar Color="@(ava == "H" ? Color.Surface : (ava == "V" ? Color.Success : Color.Info))">
+                                        @ava
+                                    </MudAvatar>
+                                }
+                            </CardHeaderAvatar>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.button" Class="@(string.IsNullOrEmpty(msg.SenderIdentity) ? "d-none" : "")">
+                                    @msg.SenderIdentity
+                                </MudText>
+                                @if (!own)
+                                {
+                                    <MudText Typo="Typo.body2" Style="word-break: break-all;">
+                                        @msg.SenderAccount
+                                    </MudText>
+                                }
+                                <div class="d-flex flex-wrap pt-1">
+                                    <MudText Typo="Typo.overline" Class="pr-2" Style="line-height:var(--mud-typography-body2-lineheight);">
+                                        @msg.MessageDate.ToLocalTime()
+                                    </MudText>
+                                    <MudText Typo="Typo.overline" Style="line-height:var(--mud-typography-body2-lineheight);">
+                                        <b>@msg.MessageDate.TimeAgo()</b>
+                                    </MudText>
+                                </div>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent Class="relative">
+                            <MudText Typo="Typo.body2">
+                                <b>@(msg.MessageType == MessageType.Info ? "Info update" : "Message"):</b>
+                                @msg.Message
+                            </MudText>
+                            <div class="pt-2">
+                                <MudRating ReadOnly="true" SelectedValue="@msg.Rating" Size="Size.Small" Class="@(msg.MessageType == MessageType.Rating ? "" : "d-none")" />
+                            </div>
+                            <MudText Typo="Typo.overline" Color="Color.Default" Class="absolute pr-1" Style="bottom:-6px;right:0;">
+                                @(isObsoleteInfo || isObsoleteRate ? "obsolete" : "") #@msg.MessageNum
+                            </MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            }
+        }
+    </MudGrid>
+</MudContainer>
+
+@code {
+    [CascadingParameter]
+    public bool isDarkMode { get; set; }
+    [Parameter] public string accountId { get; set; } = string.Empty;
+    bool isAccountValid { get; set; }
+    AccountXXNetwork? xxAccount;
+    AccountXXNetwork? senderAccount;
+    Talker? talker;
+    bool showSkeleton { get; set; }
+    bool showAccountData { get; set; }
+    bool showNotFound { get; set; }
+    bool showLoader { get; set; }
+    bool showUpdateLoader { get; set; }
+    bool filterObsolete { get; set; }
+    bool filterRating { get; set; }
+    string errorMessage { get; set; } = string.Empty;
+    string resultUpdate { get; set; } = string.Empty;
+    HubConnection? hubConnection;
+
+    ////////////HUB
+
+    //private bool IsConnected =>
+    //    hubConnection?.State == HubConnectionState.Connected;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "FilterObsolete", filterObsolete);
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "FilterRating", filterRating);
+
+        if (firstRender)
+        {
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl(Navigation.ToAbsoluteUri("/talkerhub"))
+                .Build();
+
+            hubConnection.On<string>("NewAccountMessage", async (receiverAccount) =>
+            {
+                if (receiverAccount == accountId)
+                {
+                    showLoader = true;
+                    Snackbar.Add("New message added", Severity.Info);
+                    await Task.Run(() => GetTalkerAsync());
+                }
+            });
+
+            await hubConnection.StartAsync();
+            await hubConnection.SendAsync("AddToGroup", accountId);
+            StateHasChanged();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+
+    ////////////
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrEmpty(accountId))
+        {
+            var strFilterObsolete = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "FilterObsolete");
+            if (!string.IsNullOrEmpty(strFilterObsolete))
+                filterObsolete = bool.Parse(strFilterObsolete.Replace("'", string.Empty));
+
+            var strFilterRating = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "FilterRating");
+            if (!string.IsNullOrEmpty(strFilterRating))
+                filterRating = bool.Parse(strFilterRating.Replace("'", string.Empty));
+
+            CheckAccount();
+            await GetAccountDataAsync();
+            showLoader = true;
+            await Task.Run(() => GetTalkerAsync());
+        }
+    }
+
+    private void CheckAccount()
+    {
+        if (String.IsNullOrEmpty(accountId))
+        {
+            isAccountValid = false;
+        }
+        else
+        {
+            if (!Regex.IsMatch(accountId, @"^6[A-HJ-NP-Za-km-z1-9]{47}$"))
+            {
+                isAccountValid = false;
+            }
+            else
+            {
+                isAccountValid = true;
+            }
+        }
+    }
+
+    private async Task GetAccountDataAsync()
+    {
+        if (isAccountValid)
+        {
+            showSkeleton = true;
+            showAccountData = false;
+            showNotFound = false;
+            errorMessage = string.Empty;
+            StateHasChanged();
+
+            var postBody = new
+            {
+                operationName = "GetAccountByPK",
+                variables = new { accountId = accountId },
+                query = "fragment identity on identity {\n  blurb\n  display\n  discord\n  displayParent: display_parent\n  email\n  judgements\n  legal\n  riot\n  twitter\n  verified\n  web\n  __typename\n}\n\nfragment roles_fragment on account {\n  techcommit\n  special\n  nominator\n  council\n  validator\n  __typename\n}\n\nfragment account on account {\n  id: account_id\n  controllerAddress: controller_address\n  active\n  whenCreated: when_created\n  whenKilled: when_killed\n  blockHeight: block_height\n  identity {\n    ...identity\n    __typename\n  }\n  nonce\n  timestamp\n  ...roles_fragment\n  lockedBalance: locked_balance\n  reservedBalance: reserved_balance\n  totalBalance: total_balance\n  bondedBalance: bonded_balance\n  councilBalance: council_balance\n  democracyBalance: democracy_balance\n  transferrableBalance: transferrable_balance\n  unbondingBalance: unbonding_balance\n  vestingBalance: vesting_balance\n  __typename\n}\n\nquery GetAccountByPK($accountId: String!) {\n  account: account_by_pk(account_id: $accountId) {\n    ...account\n    __typename\n  }\n}"
+            };
+            try
+            {
+                using var response = await HttpClient.PostAsJsonAsync("https://xxexplorer-prod.hasura.app/v1/graphql", postBody);
+                if (!response.IsSuccessStatusCode)
+                {
+                    errorMessage = $"GetAccountDataAsync: {response.ReasonPhrase}";
+                }
+                else
+                {
+                    //var test = await response.Content.ReadAsStringAsync();
+
+                    var jData = await response.Content.ReadFromJsonAsync<JsonElement>();
+                    var acc = jData.GetProperty("data").GetProperty("account");
+                    if (acc.ValueKind != JsonValueKind.Null)
+                    {
+                        var options = new JsonSerializerOptions();
+                        options.Converters.Add(new BigIntegerConverter());
+
+                        xxAccount = acc.Deserialize<xxTalker.Shared.Models.AccountXXNetwork>(options);
+                        showAccountData = true;
+                    }
+                    else
+                    {
+                        showNotFound = true;
+                    }
+                }
+            }
+            catch (ApplicationException e)
+            {
+                errorMessage = $"GetAccountDataAsync->Exception: {e.Message}";
+            }
+            showSkeleton = false;
+        }
+        else
+        {
+            showAccountData = false;
+            showNotFound = true;
+        }
+    }
+
+    private async void GetTalkerAsync()
+    {
+        //await Task.Delay(5000);
+
+        var client = ClientFactory.CreateClient("xxTalker.ServerAPI");
+        var response = await client.GetAsync($"api/Talkers/{accountId}");
+        if (!response.IsSuccessStatusCode)
+        {
+            var jErr = await response.Content.ReadAsStringAsync();
+            errorMessage = $"GetTalkerAsync: {jErr}";
+        }
+        else
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+            if (!string.IsNullOrEmpty(responseContent))
+            {
+                talker = await response.Content.ReadFromJsonAsync<Talker>();
+            }
+        }
+        showLoader = false;
+        showUpdateLoader = false;
+        StateHasChanged();
+    }
+
+    private (string, string) GetFormattedBalance()
+    {
+        string balancePart1 = "0.00";
+        string balancePart2 = "";
+        if (xxAccount != null)
+        {
+            if (!xxAccount.totalBalance.IsZero)
+            {
+                BigInteger quotient;
+                BigInteger bigRem = 0;
+                quotient = BigInteger.DivRem(xxAccount.totalBalance, new BigInteger(1e9), out bigRem);
+                NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
+                string strRem = String.Format("{0:0.00#######}", Decimal.Parse("0." + bigRem.ToString("d9"), nfi));
+                balancePart1 = String.Format("{0:N0}.{1}", quotient, strRem.Split(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator).Last());
+                balancePart2 = balancePart1.Split(".").Last().Substring(2);
+                balancePart1 = balancePart1.Substring(0, balancePart1.Length - balancePart2.Length);
+            }
+        }
+        return (balancePart1, balancePart2);
+    }
+
+    private string GetRole(AccountXXNetwork? account)
+    {
+        List<String> roles = new List<string>();
+        string role = "Holder";
+        if (account != null)
+        {
+            if (account.validator) roles.Add("Validator");
+            if (account.nominator) roles.Add("Nominator");
+            if (account.council) roles.Add("Council");
+            if (roles.Any()) role = string.Join(", ", roles.ToArray());
+        }
+        return role;
+    }
+
+    private async void GetInfoDialogAsync()
+    {
+        errorMessage = string.Empty;
+        var parameters = new DialogParameters { ["AccountId"] = accountId, ["MessageType"] = MessageType.Info };
+        DialogOptions dOptions = new DialogOptions() { DisableBackdropClick = true, MaxWidth = MaxWidth.Medium, FullWidth = true, CloseButton = true };
+        var dialog = await DialogService.ShowAsync<Send_Dialog>("Send signed message", parameters, dOptions);
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            showUpdateLoader = true;
+            StateHasChanged();
+            var infoData = (Send_Dialog.MessageData)result.Data;
+            var actionResult = await UpdateInfoAsync(infoData);
+            if (string.IsNullOrEmpty(actionResult))
+            {
+                Snackbar.Add("Info updated", Severity.Success);
+                await Task.Run(() => GetTalkerAsync());
+            }
+            else
+            {
+                Snackbar.Add("Info update error", Severity.Error);
+                errorMessage = actionResult;
+                showUpdateLoader = false;
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task<string> UpdateInfoAsync(Send_Dialog.MessageData infoData)
+    {
+        var msg = new TalkerMessage();
+        msg.Signature = infoData.Signature;
+        msg.Message = infoData.Message;
+        msg.ReceiverAccount = accountId;
+        msg.ReceiverIdentity = xxAccount?.identity?.display;
+        msg.ReceiverRole = GetRole(xxAccount);
+        msg.MessageType = MessageType.Info;
+        msg.MessageNum = talker != null && talker.Messages.Any() ? talker.Messages.Count : 0;
+
+        var client = ClientFactory.CreateClient("xxTalker.ServerAPI");
+        var response = await client.PostAsJsonAsync("api/Messages", msg);
+        if (!response.IsSuccessStatusCode)
+        {
+            var jErr = await response.Content.ReadAsStringAsync();
+            return $"UpdateInfoAsync: {jErr}";
+        }
+        return string.Empty;
+    }
+
+    private async void GetMessageDialogAsync()
+    {
+        errorMessage = string.Empty;
+        var parameters = new DialogParameters { ["accountId"] = accountId, ["MessageType"] = MessageType.Message };
+        DialogOptions dOptions = new DialogOptions() { DisableBackdropClick = true, MaxWidth = MaxWidth.Medium, FullWidth = true, CloseButton = true };
+        var dialog = await DialogService.ShowAsync<Send_Dialog>("Send signed message", parameters, dOptions);
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            showLoader = true;
+            StateHasChanged();
+            var messageData = (Send_Dialog.MessageData)result.Data;
+            var actionResult = await GetSenderAccountDataAsync(messageData.Account);
+            if (string.IsNullOrEmpty(actionResult))
+            {
+                actionResult = await SendMessageAsync(messageData);
+                if (string.IsNullOrEmpty(actionResult))
+                {
+                    Snackbar.Add("Message sent", Severity.Success);
+                    await Task.Run(() => GetTalkerAsync());
+                }
+                else
+                {
+                    Snackbar.Add("Message sending error", Severity.Error);
+                    errorMessage = actionResult;
+                    showLoader = false;
+                    StateHasChanged();
+                }
+            }
+            else
+            {
+                Snackbar.Add("Message sending error", Severity.Error);
+                errorMessage = actionResult;
+                showLoader = false;
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task<string> SendMessageAsync(Send_Dialog.MessageData messageData)
+    {
+        var msg = new TalkerMessage();
+        msg.Signature = messageData.Signature;
+        msg.Message = messageData.Message;
+        msg.ReceiverAccount = accountId;
+        msg.ReceiverIdentity = xxAccount?.identity?.display;
+        msg.ReceiverRole = GetRole(xxAccount);
+        if (!string.IsNullOrEmpty(messageData.Account) && accountId != messageData.Account)
+        {
+            msg.SenderAccount = messageData.Account;
+            msg.SenderIdentity = senderAccount?.identity?.display;
+            msg.SenderRole = GetRole(senderAccount);
+            msg.Rating = messageData.Rating;
+        }
+        else
+        {
+            messageData.Rating = 0;
+        }
+        msg.MessageType = messageData.Rating == 0 ? MessageType.Message : MessageType.Rating;
+        msg.MessageNum = talker != null && talker.Messages.Any() ? talker.Messages.Count : 0;
+
+        var client = ClientFactory.CreateClient("xxTalker.ServerAPI");
+        var response = await client.PostAsJsonAsync("api/Messages", msg);
+        if (!response.IsSuccessStatusCode)
+        {
+            var jErr = await response.Content.ReadAsStringAsync();
+            return $"SendMessageAsync: {jErr}";
+        }
+        return string.Empty;
+    }
+
+    private async Task<string> GetSenderAccountDataAsync(string senderAccountId)
+    {
+        if (string.IsNullOrEmpty(senderAccountId))
+        {
+            return string.Empty;
+        }
+        try
+        {
+            var postBody = new
+            {
+                operationName = "GetAccountByPK",
+                variables = new { accountId = senderAccountId },
+                query = "fragment identity on identity {\n  blurb\n  display\n  discord\n  displayParent: display_parent\n  email\n  judgements\n  legal\n  riot\n  twitter\n  verified\n  web\n  __typename\n}\n\nfragment roles_fragment on account {\n  techcommit\n  special\n  nominator\n  council\n  validator\n  __typename\n}\n\nfragment account on account {\n  id: account_id\n  controllerAddress: controller_address\n  active\n  whenCreated: when_created\n  whenKilled: when_killed\n  blockHeight: block_height\n  identity {\n    ...identity\n    __typename\n  }\n  nonce\n  timestamp\n  ...roles_fragment\n  lockedBalance: locked_balance\n  reservedBalance: reserved_balance\n  totalBalance: total_balance\n  bondedBalance: bonded_balance\n  councilBalance: council_balance\n  democracyBalance: democracy_balance\n  transferrableBalance: transferrable_balance\n  unbondingBalance: unbonding_balance\n  vestingBalance: vesting_balance\n  __typename\n}\n\nquery GetAccountByPK($accountId: String!) {\n  account: account_by_pk(account_id: $accountId) {\n    ...account\n    __typename\n  }\n}"
+            };
+            using var response = await HttpClient.PostAsJsonAsync("https://xxexplorer-prod.hasura.app/v1/graphql", postBody);
+            if (!response.IsSuccessStatusCode)
+            {
+                return $"GetSenderAccountDataAsync: {response.ReasonPhrase}";
+            }
+            var jData = await response.Content.ReadFromJsonAsync<JsonElement>();
+            var acc = jData.GetProperty("data").GetProperty("account");
+            if (acc.ValueKind == JsonValueKind.Null)
+            {
+                return $"GetSenderAccountDataAsync: JsonValueKind.Null";
+            }
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new BigIntegerConverter());
+
+            senderAccount = acc.Deserialize<xxTalker.Shared.Models.AccountXXNetwork>(options);
+            return string.Empty;
+        }
+        catch (ApplicationException e)
+        {
+            return $"GetSenderAccountDataAsync->Exception: {e.Message}";
+        }
+    }
+
+}

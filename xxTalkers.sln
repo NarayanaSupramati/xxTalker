@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33403.182
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xxTalker.Server", "xxTalker\Server\xxTalker.Server.csproj", "{4D4996BD-FF43-4E35-98E3-2FF8EB545501}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xxTalker.Client", "xxTalker\Client\xxTalker.Client.csproj", "{F6C2EA3F-4691-4C1F-97CF-663D0A07417D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xxTalker.Shared", "xxTalker\Shared\xxTalker.Shared.csproj", "{17E5F09B-F1C7-4F78-AABA-240F896ECE87}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4D4996BD-FF43-4E35-98E3-2FF8EB545501}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D4996BD-FF43-4E35-98E3-2FF8EB545501}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D4996BD-FF43-4E35-98E3-2FF8EB545501}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D4996BD-FF43-4E35-98E3-2FF8EB545501}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6C2EA3F-4691-4C1F-97CF-663D0A07417D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6C2EA3F-4691-4C1F-97CF-663D0A07417D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6C2EA3F-4691-4C1F-97CF-663D0A07417D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6C2EA3F-4691-4C1F-97CF-663D0A07417D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17E5F09B-F1C7-4F78-AABA-240F896ECE87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17E5F09B-F1C7-4F78-AABA-240F896ECE87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17E5F09B-F1C7-4F78-AABA-240F896ECE87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17E5F09B-F1C7-4F78-AABA-240F896ECE87}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1A82FEF1-1E15-4B04-B13E-75F403A0C77E}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 4
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://supramati.visualstudio.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = xxTalker\\Client\\xxTalker.Client.csproj
+		SccProjectName1 = xxTalker/Client
+		SccLocalPath1 = xxTalker\\Client
+		SccProjectUniqueName2 = xxTalker\\Server\\xxTalker.Server.csproj
+		SccProjectName2 = xxTalker/Server
+		SccLocalPath2 = xxTalker\\Server
+		SccProjectUniqueName3 = xxTalker\\Shared\\xxTalker.Shared.csproj
+		SccProjectName3 = xxTalker/Shared
+		SccLocalPath3 = xxTalker\\Shared
+	EndGlobalSection
+EndGlobal

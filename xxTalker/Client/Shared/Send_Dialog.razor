@@ -1,0 +1,155 @@
+﻿@using System.Text
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@inject ISnackbar Snackbar
+
+<EditForm Model="@(messageType == MessageType.Message ? messageData : infoData)" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudDialog>
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.Message" Class="mr-3" Style="vertical-align: middle;" />
+                Send signed message
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+            <MudText Style="word-break: break-all;">
+                @(messageType == MessageType.Message ? "Message" : "Update Info") for <b>@accountId</b>
+            </MudText>
+            @if (messageType == MessageType.Message)
+            {
+                <MudTextField T="string" Label="Sender account" MaxLength="48"
+                          @bind-Value="messageData.Account" For="@(() => messageData.Account)" />
+                <MudTextField T="string" Label="Message" MaxLength="1000"
+                          Variant="Variant.Text" Lines="5"
+                          @bind-Value="messageData.Message" For="@(() => messageData.Message)" />
+
+                <MudTextField T="string" Label="Signature of supplied message" MaxLength="130"
+                          @bind-Value="messageData.Signature" For="@(() => messageData.Signature)" />
+            }
+            else
+            {
+                <MudTextField T="string" Label="Info message" MaxLength="1000"
+                          Variant="Variant.Text" Lines="5"
+                          @bind-Value="infoData.Info" For="@(() => infoData.Info)" />
+
+                <MudTextField T="string" Label="Signature of supplied message" MaxLength="130"
+                          @bind-Value="infoData.Signature" For="@(() => infoData.Signature)" />
+            }
+        </DialogContent>
+        <DialogActions>
+            <div class="d-flex flex-grow-1 flex-wrap align-center justify-end">
+                @if (messageType == MessageType.Message)
+                {
+                    <div class="ml-3 mt-1">
+                        <MudRating @bind-SelectedValue="messageData.Rating" Disabled="!ratingOn" HoveredValueChanged="RatingHoveredValueChanged" />
+                    </div>
+                    <div class="flex-grow-1 ml-3">
+                        <MudToggleIconButton
+                                         Icon="@Icons.Material.Filled.ToggleOff" Color="@Color.Error"
+                                         ToggledIcon="@Icons.Material.Filled.ToggleOn" ToggledColor="@Color.Success"
+                                         ToggledChanged="RatingChanged" Toggled="@ratingOn" />
+                        <MudHidden Breakpoint="Breakpoint.Xs" Invert="false">
+                            <MudText Typo="Typo.button" Class="@(ratingOn ? "deep-purple-text" : "d-none")">@RatingText</MudText>
+                        </MudHidden>
+                    </div>
+                }
+                <div class="mr-4">
+                    <MudButton OnClick="Cancel">Cancel</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary">Send</MudButton>
+                </div>
+            </div>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+    [CascadingParameter] MudDialogInstance? sendDialog { get; set; }
+    [Parameter] public string accountId { get; set; }
+    [Parameter] public MessageType messageType { get; set; }
+    MessageData messageData = new MessageData();
+    InfoData infoData = new InfoData();
+    public bool ratingOn { get; set; }
+
+    private int? activeVal;
+
+    private void RatingHoveredValueChanged(int? val) => activeVal = val;
+
+    private string RatingText => (activeVal ?? messageData.Rating) switch
+    {
+        1 => "Very bad",
+        2 => "Bad",
+        3 => "Sufficient",
+        4 => "Good",
+        5 => "Awesome!",
+        _ => "Rate your message!"
+    };
+
+    void Cancel() => sendDialog?.Cancel();
+
+    public class MessageData
+    {
+        [RegularExpression("^6[A-HJ-NP-Za-km-z1-9]{47}$", ErrorMessage = "Account length must be 48 characters, start with 6 and follow the SS58 format.")]
+        public string? Account { get; set; }
+
+        [Required]
+        [StringLength(1000, ErrorMessage = "Message length can't be more than 1000.")]
+        public string Message { get; set; }
+
+        [Required]
+        [RegularExpression("^(0x)?[0-9a-f]{128}$", ErrorMessage = "Signature length should be 128-130, 0x is optional.")]
+        public string Signature { get; set; }
+
+        [RegularExpression("^[0-5]{1}$", ErrorMessage = "Number from 0 to 5.")]
+        public int Rating { get; set; }
+    }
+
+    private class InfoData
+    {
+        [StringLength(1000, ErrorMessage = "Info length can't be more than 1000.")]
+        public string? Info { get; set; }
+
+        [Required]
+        [RegularExpression("^(0x)?[0-9a-f]{128}$", ErrorMessage = "Signature length should be 128-130, 0x is optional.")]
+        public string Signature { get; set; }
+    }
+
+    private void OnValidSubmit(EditContext context)
+    {
+        if (messageType == MessageType.Message)
+        {
+            messageData = (MessageData)context.Model;
+        }
+        else
+        {
+            infoData = (InfoData)context.Model;
+            messageData.Signature = infoData.Signature;
+            messageData.Message = infoData.Info;
+        }
+        var account = string.IsNullOrEmpty(messageData.Account) ? accountId : messageData.Account;
+        var signature = Common.StringToByteArray(messageData.Signature);
+        var publicKey = Common.GetPublicKeyFromAddr(account);
+        var message = Encoding.UTF8.GetBytes(string.Format("<Bytes>{0}</Bytes>", messageData.Message));
+
+        var isVerify = Schnorrkel.Sr25519v091.Verify(signature, publicKey, message);
+        if (isVerify)
+        {
+            sendDialog?.Close(DialogResult.Ok(messageData));
+        }
+        else
+        {
+            Snackbar.Add("Signature not verified", Severity.Error);
+        }
+    }
+
+    private void RatingChanged(bool toggled)
+    {
+        ratingOn = toggled;
+        if (!ratingOn)
+        {
+            messageData.Rating = 0;
+        }
+    }
+
+}
