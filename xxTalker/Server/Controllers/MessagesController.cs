@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using MudBlazor;
 using System.Text;
 using System.Text.Json;
@@ -20,11 +20,13 @@ namespace xxTalker.Server.Controllers
 
         private readonly IDataAccessProvider _dataAccessProvider;
         private readonly IHubContext<TalkerHub> _hubContext;
+        private readonly IConfiguration _config;
 
-        public MessagesController(IDataAccessProvider dataAccessProvider, IHubContext<TalkerHub> hubContext)
+        public MessagesController(IDataAccessProvider dataAccessProvider, IHubContext<TalkerHub> hubContext, IConfiguration config)
         {
             _dataAccessProvider = dataAccessProvider;
             _hubContext = hubContext;
+            _config = config;
         }
 
         [HttpGet]
@@ -58,7 +60,7 @@ namespace xxTalker.Server.Controllers
         [HttpPost]
         [EnableCors]
         [ValidateReferrer]
-        [RequestLimit("AddMessageAsync", NoOfRequest = 1, Seconds = 30)]
+        [RequestLimit("AddMessageAsync", NoOfRequest = 6, Seconds = 60)]
         public async Task<IActionResult> AddMessageAsync([FromBody] TalkerMessage message)
         {
             try
@@ -186,17 +188,18 @@ namespace xxTalker.Server.Controllers
             //spam & dupl
             var lastMsg = await _dataAccessProvider.GetLastSenderMessageAsync(message);
             if (lastMsg != null) {
+                var msgInterval = _config.GetValue<int>("MessageInterval");
                 var timeAgo = DateTime.UtcNow.Subtract(lastMsg.MessageDate);
-                if (timeAgo < TimeSpan.FromSeconds(30)) //TODO: [RequestLimit]
+                if (timeAgo < TimeSpan.FromSeconds(msgInterval))
                 {
                     if (errorList.ContainsKey("Message"))
                     {
                         var msg = errorList.GetValueOrDefault("Message");
-                        msg[msg.Length] = "30 s. interval";
+                        msg[msg.Length] = $"Outside the {msgInterval}-second interval";
                     }
                     else
                     {
-                        errorList.Add("Message", new[] { "30 s. interval" });
+                        errorList.Add("Message", new[] { $"Outside the {msgInterval}-second interval" });
                     }
                 }
                 if (lastMsg.Message == message.Message)
