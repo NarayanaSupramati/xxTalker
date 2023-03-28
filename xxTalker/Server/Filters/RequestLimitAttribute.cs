@@ -1,7 +1,8 @@
-﻿using System.Net;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 
 namespace xxTalker.Server.Filters
 {
@@ -12,6 +13,8 @@ namespace xxTalker.Server.Filters
     [AttributeUsage(AttributeTargets.Method)]
     public class RequestLimitAttribute : ActionFilterAttribute
     {
+        private IConfiguration _configuration;
+
         public RequestLimitAttribute(string name)
         {
             Name = name;
@@ -36,6 +39,15 @@ namespace xxTalker.Server.Filters
         } = new MemoryCache(new MemoryCacheOptions());
         public override void OnActionExecuting(ActionExecutingContext context)
         {
+            _configuration = (IConfiguration)context.HttpContext.RequestServices.GetService(typeof(IConfiguration));
+            if (_configuration != null ) {
+                var requestLimit = _configuration.GetSection("RequestLimit");
+                if (requestLimit != null) {
+                    NoOfRequest = requestLimit.GetValue<int>("NoOfRequest");
+                    Seconds = requestLimit.GetValue<int>("Seconds");
+                }
+            }
+
             var ipAddress = context.HttpContext.Request.HttpContext.Connection.RemoteIpAddress;
             var memoryCacheKey = $"{Name}-{ipAddress}";
             Cache.TryGetValue(memoryCacheKey, out int prevReqCount);
