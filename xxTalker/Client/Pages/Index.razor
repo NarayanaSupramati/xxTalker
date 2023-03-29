@@ -168,25 +168,24 @@
                         </MudOverlay>
                         <MudCardHeader Class="pb-0">
                             <CardHeaderAvatar>
-                                @if (own && msg.MessageType != MessageType.Info)
-                                {
-                                    <MudAvatar Color="@(ava == "H" ? Color.Surface : (ava == "V" ? Color.Success : Color.Info))">
+                                <MudAvatar Color="@(ava == "H" ? Color.Surface : (ava == "V" ? Color.Success : Color.Info))">
+                                    @*@if (own && msg.MessageType != MessageType.Info)
+                                    {
                                         <MudIcon Icon="@crown" />
-                                    </MudAvatar>
-                                }
-                                else
-                                {
-                                    <MudAvatar Color="@(ava == "H" ? Color.Surface : (ava == "V" ? Color.Success : Color.Info))">
+                                    }
+                                    else
+                                    {
                                         @ava
-                                    </MudAvatar>
-                                }
+                                    }*@
+                                    @ava
+                                </MudAvatar>
                             </CardHeaderAvatar>
                             <CardHeaderContent>
-                                <MudText Typo="Typo.button" Class="@(string.IsNullOrEmpty(msg.SenderIdentity) ? "d-none" : "")">
-                                    @msg.SenderIdentity
-                                </MudText>
                                 @if (own)
                                 {
+                                    <MudText Typo="Typo.button" Class="@(string.IsNullOrEmpty(msg.ReceiverIdentity) ? "d-none" : "")">
+                                        @msg.ReceiverIdentity
+                                    </MudText>
                                     <MudText Typo="Typo.body2" Style="word-break: break-all;">
                                         @msg.ReceiverAccount
                                         <MudLink Href="@("account/" + msg.ReceiverAccount)">
@@ -196,6 +195,9 @@
                                 }
                                 else
                                 {
+                                    <MudText Typo="Typo.button" Class="@(string.IsNullOrEmpty(msg.SenderIdentity) ? "d-none" : "")">
+                                        @msg.SenderIdentity
+                                    </MudText>
                                     <MudText Typo="Typo.body2" Style="word-break: break-all;">
                                         @msg.SenderAccount
                                     </MudText>
