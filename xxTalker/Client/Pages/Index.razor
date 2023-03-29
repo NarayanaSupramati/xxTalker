@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 @using System.Globalization;
 @using System.Text.RegularExpressions
 @using System.Text.Json
@@ -223,7 +223,7 @@
                             }
                             <MudText Typo="Typo.body2">
                                 <b>@(msg.MessageType == MessageType.Info ? "Info update" : "Message"):</b>
-                                @msg.Message
+                                <Lines InputString="@msg.Message" />
                             </MudText>
                             <div class="pt-2">
                                 <MudRating ReadOnly="true" SelectedValue="@msg.Rating" Size="Size.Small" Class="@(msg.MessageType == MessageType.Rating ? "" : "d-none")" />
