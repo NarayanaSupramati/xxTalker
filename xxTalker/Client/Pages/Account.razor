@@ -154,27 +154,31 @@
                         </MudOverlay>
                         <MudCardHeader Class="pb-0">
                             <CardHeaderAvatar>
-                                @if (own)
-                                {
-                                    <MudAvatar Color="@(ava == "H" ? Color.Surface : (ava == "V" ? Color.Success : Color.Info))">
+                                <MudAvatar Color="@(ava == "H" ? Color.Surface : (ava == "V" ? Color.Success : Color.Info))">
+                                    @if (own)
+                                    {
                                         <MudIcon Icon="@crown" />
-                                    </MudAvatar>
+                                    }
+                                    else
+                                    {
+                                        @ava
+                                    }
+                                </MudAvatar>
+                            </CardHeaderAvatar>
+                            <CardHeaderContent>
+                                @if (!own)
+                                {
+                                    <MudText Typo="Typo.button" Class="@(string.IsNullOrEmpty(msg.SenderIdentity) ? "d-none" : "")">
+                                        @msg.SenderIdentity
+                                    </MudText>
+                                    <MudText Typo="Typo.body2" Style="word-break: break-all;">
+                                        @msg.SenderAccount
+                                    </MudText>
                                 }
                                 else
                                 {
-                                    <MudAvatar Color="@(ava == "H" ? Color.Surface : (ava == "V" ? Color.Success : Color.Info))">
-                                        @ava
-                                    </MudAvatar>
-                                }
-                            </CardHeaderAvatar>
-                            <CardHeaderContent>
-                                <MudText Typo="Typo.button" Class="@(string.IsNullOrEmpty(msg.SenderIdentity) ? "d-none" : "")">
-                                    @msg.SenderIdentity
-                                </MudText>
-                                @if (!own)
-                                {
-                                    <MudText Typo="Typo.body2" Style="word-break: break-all;">
-                                        @msg.SenderAccount
+                                    <MudText Typo="Typo.button" Class="@(string.IsNullOrEmpty(msg.ReceiverIdentity) ? "d-none" : "")">
+                                        @msg.ReceiverIdentity
                                     </MudText>
                                 }
                                 <div class="d-flex flex-wrap pt-1">
