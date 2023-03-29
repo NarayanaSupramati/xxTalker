@@ -1,0 +1,22 @@
+﻿@foreach (var line in lines)
+{
+    @line
+    if (line != lines.Last())
+    {
+        <br />
+    }
+}
+@code {
+    List<string> lines = new List<string>();
+
+    [Parameter]
+    public string InputString { get; set; } = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        if (!string.IsNullOrEmpty(InputString))
+        {
+            lines = InputString.Split('\n').ToList();
+        }
+    }
+}
