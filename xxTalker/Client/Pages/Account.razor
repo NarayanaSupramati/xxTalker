@@ -1,4 +1,4 @@
-﻿@page "/account/{accountId}"
+@page "/account/{accountId}"
 @using System.Globalization;
 @using System.Text.RegularExpressions
 @using System.Text.Json
@@ -64,7 +64,7 @@
                     </MudText>
                     <MudText Typo="Typo.body1" Class="@(string.IsNullOrEmpty(talker?.Info) ? "d-none" : "mt-4")">
                         <MudIcon Icon="@Icons.Material.Outlined.Info" Size="Size.Small" Color="Color.Default" Style="vertical-align: text-bottom;" />
-                        @talker?.Info
+                        <Lines InputString="@talker?.Info" />
                     </MudText>
                     <div class="d-flex flex-grow-1 gap-2 flex-wrap align-center justify-end">
                         <div class="pt-2">
@@ -190,7 +190,7 @@
                         <MudCardContent Class="relative">
                             <MudText Typo="Typo.body2">
                                 <b>@(msg.MessageType == MessageType.Info ? "Info update" : "Message"):</b>
-                                @msg.Message
+                                <Lines InputString="@msg.Message" />
                             </MudText>
                             <div class="pt-2">
                                 <MudRating ReadOnly="true" SelectedValue="@msg.Rating" Size="Size.Small" Class="@(msg.MessageType == MessageType.Rating ? "" : "d-none")" />
