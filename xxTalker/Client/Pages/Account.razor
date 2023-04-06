@@ -41,11 +41,11 @@
                     <MudOverlay Visible="showUpdateLoader" LightBackground="!isDarkMode" DarkBackground="isDarkMode" Absolute="true">
                         <MudProgressCircular Color="Color.Secondary" Size="Size.Large" Indeterminate="true" />
                     </MudOverlay>
-                    <MudText Typo="Typo.h5" Style="word-break: break-all;">
-                        @xxAccount?.id
-                    </MudText>
                     <MudText Typo="Typo.h6" Style="word-break: break-all;font-weight: 100;" Class="@(string.IsNullOrEmpty(xxAccount?.identity?.display) ? "d-none" : "")">
                         @xxAccount?.identity?.display
+                    </MudText>
+                    <MudText Typo="Typo.h5" Style="word-break: break-all;">
+                        @xxAccount?.id
                     </MudText>
                     <MudText Typo="Typo.body2" Class="d-inline" Style="font-weight: 100;">
                         Role: <b>@GetRole(xxAccount)</b>
@@ -63,7 +63,7 @@
                         </MudElement>
                     </MudText>
                     <MudText Typo="Typo.body1" Class="@(string.IsNullOrEmpty(talker?.Info) ? "d-none" : "mt-4")">
-                        <MudIcon Icon="@Icons.Material.Outlined.Info" Size="Size.Small" Color="Color.Default" Style="vertical-align: text-bottom;" />
+                        <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" Color="Color.Default" Style="vertical-align: text-bottom;" />
                         <Lines InputString="@talker?.Info" />
                     </MudText>
                     <div class="d-flex flex-grow-1 gap-2 flex-wrap align-center justify-end">
@@ -144,17 +144,12 @@
                     var roles = msg.SenderRole.Split(",").Select(r => r.Trim());
                     ava = roles.Contains("Validator") ? "V" : (roles.Contains("Nominator") ? "N" : "H");
                 }
-                var crown = @"
-        <svg style=""width:1em;height:1em;"" viewBox=""0 0 24 24"" fill=""none"" xmlns=""http://www.w3.org/2000/svg"">
-        <path d=""M4 19H20M4 5V16H20V5L16 9L12 5L8 9L4 5Z"" stroke=""#ffffff"" stroke-width=""2.0"" stroke-linecap=""round"" stroke-linejoin=""round""/>
-        </svg>";
-                <MudItem md="6" xs="12" Class="@(filterObsolete && (isObsoleteInfo || isObsoleteRate) || filterRating && msg.MessageType != MessageType.Rating ? "d-none" : "")">
-                    <MudCard Class="relative">
-                        <MudOverlay Visible="isObsoleteInfo || isObsoleteRate" LightBackground="!isDarkMode" DarkBackground="isDarkMode" Absolute="true">
-                        </MudOverlay>
-                        <MudCardHeader Class="pb-0">
-                            <CardHeaderAvatar>
-                                <MudAvatar Color="@(ava == "H" ? Color.Surface : (ava == "V" ? Color.Success : Color.Info))">
+                var crown = @"<svg style=""width:1em;height:1em;"" viewBox=""0 0 24 24"" fill=""none"" xmlns=""http://www.w3.org/2000/svg""><path d=""M4 19H20M4 5V16H20V5L16 9L12 5L8 9L4 5Z"" stroke=""#ffffff"" stroke-width=""2.0"" stroke-linecap=""round"" stroke-linejoin=""round""/></svg>";
+                <MudItem xs="12" Class="@(filterObsolete && (isObsoleteInfo || isObsoleteRate) || filterRating && msg.MessageType != MessageType.Rating ? "d-none" : "pa-0")">
+                    <MudTimeline TimelinePosition="TimelinePosition.Start" Class="pt-0">
+                        <MudTimelineItem Size="Size.Medium" Variant="Variant.Outlined">
+                            <ItemDot>
+                                <MudAvatar Color="@(ava == "H" ? Color.Surface : (ava == "V" ? Color.Tertiary : Color.Info))">
                                     @if (own)
                                     {
                                         <MudIcon Icon="@crown" />
@@ -164,49 +159,50 @@
                                         @ava
                                     }
                                 </MudAvatar>
-                            </CardHeaderAvatar>
-                            <CardHeaderContent>
-                                @if (!own)
-                                {
-                                    <MudText Typo="Typo.button" Class="@(string.IsNullOrEmpty(msg.SenderIdentity) ? "d-none" : "")">
-                                        @msg.SenderIdentity
-                                    </MudText>
-                                    <MudText Typo="Typo.body2" Style="word-break: break-all;">
-                                        @msg.SenderAccount
-                                    </MudText>
-                                }
-                                else
-                                {
-                                    <MudText Typo="Typo.button" Class="@(string.IsNullOrEmpty(msg.ReceiverIdentity) ? "d-none" : "")">
-                                        @msg.ReceiverIdentity
-                                    </MudText>
-                                }
-                                <div class="d-flex flex-wrap pt-1">
-                                    <MudText Typo="Typo.overline" Class="pr-2" Style="line-height:var(--mud-typography-body2-lineheight);">
-                                        @msg.MessageDate.ToLocalTime()
-                                    </MudText>
-                                    <MudText Typo="Typo.overline" Style="line-height:var(--mud-typography-body2-lineheight);">
-                                        <b>@msg.MessageDate.TimeAgo()</b>
-                                    </MudText>
-                                </div>
-                            </CardHeaderContent>
-                        </MudCardHeader>
-                        <MudCardContent Class="relative">
-                            <MudText Typo="Typo.body2">
-                                <b>@(msg.MessageType == MessageType.Info ? "Info update" : "Message"):</b>
-                                <Lines InputString="@msg.Message" />
-                            </MudText>
-                            <div class="pt-2">
-                                <MudRating ReadOnly="true" SelectedValue="@msg.Rating" Size="Size.Small" Class="@(msg.MessageType == MessageType.Rating ? "" : "d-none")" />
-                            </div>
-                            <MudText Typo="Typo.overline" Color="Color.Default" Class="absolute pr-1" Style="bottom:-6px;right:0;">
-                                @(isObsoleteInfo || isObsoleteRate ? "obsolete" : "") #@msg.MessageNum
-                            </MudText>
-                        </MudCardContent>
-                    </MudCard>
+                            </ItemDot>
+                            <ChildContent>
+                                <MudCard Class="relative" Outlined="true">
+                                    <MudOverlay Visible="isObsoleteInfo || isObsoleteRate" LightBackground="!isDarkMode" DarkBackground="isDarkMode" Absolute="true">
+                                    </MudOverlay>
+                                    <MudCardContent>
+                                        <div class="d-flex flex-wrap pb-2">
+                                            <MudText Typo="Typo.overline" Class="pr-2" Style="line-height:var(--mud-typography-body2-lineheight);">
+                                                @msg.MessageDate.ToLocalTime()
+                                            </MudText>
+                                            <MudText Typo="Typo.overline" Style="line-height:var(--mud-typography-body2-lineheight);">
+                                                <b>@msg.MessageDate.TimeAgo()</b>
+                                            </MudText>
+                                        </div>
+                                        @if (!own)
+                                        {
+                                            <MudText Typo="Typo.button" Class="@(string.IsNullOrEmpty(msg.SenderIdentity) ? "d-none" : "")">
+                                                @msg.SenderIdentity
+                                            </MudText>
+                                            <MudText Typo="Typo.body2" Style="word-break: break-all;">
+                                                <b>From:</b>
+                                                @msg.SenderAccount
+                                            </MudText>
+                                        }
+                                        <MudText Typo="Typo.body2">
+                                            <b>@(msg.MessageType == MessageType.Info ? "Info update" : "Message"):</b>
+                                            <Lines InputString="@msg.Message" />
+                                        </MudText>
+                                        <div class="@(msg.MessageType == MessageType.Rating ? "pt-2 mb-n2" : "d-none")">
+                                            <MudRating ReadOnly="true" SelectedValue="@msg.Rating" Size="Size.Small" />
+                                        </div>
+                                        <MudText Typo="Typo.overline" Color="Color.Default" Class="absolute pr-1" Style="bottom:-6px;right:0;">
+                                            @(isObsoleteInfo || isObsoleteRate ? "obsolete" : "")
+                                        </MudText>
+                                    </MudCardContent>
+                                </MudCard>
+                            </ChildContent>
+
+                        </MudTimelineItem>
+                    </MudTimeline>
                 </MudItem>
             }
         }
+        <MudItem xs="12"></MudItem>
     </MudGrid>
 </MudContainer>
 
