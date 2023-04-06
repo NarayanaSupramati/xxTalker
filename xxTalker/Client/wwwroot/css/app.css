@@ -31,6 +31,17 @@ h1:focus {
         content: "An error has occurred."
     }
 
+/* custom */
+.lightBack {
+    background-color: #f5f5f5;
+    font-weight: 100;
+}
+
+.darkBack {
+    background-color: #424242;
+    font-weight: 100;
+}
+
 /* xx color */
 
 .mud-progress-linear.mud-progress-linear-color-default:not(.mud-progress-linear-buffer)::before {
