@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using xxTalker.Shared.Models;
 
 namespace xxTalker.Shared.DataAccess
@@ -22,6 +23,19 @@ namespace xxTalker.Shared.DataAccess
         public async Task<List<Talker>> GetTalkersAsync()
         {
             return await _context.Talkers.ToListAsync();
+        }
+
+        public async Task<List<Talker>> GetLastActiveTalkersAsync(int takeNum)
+        {
+            var uniqueTalkers = await _context.Messages.GroupBy(m => new { m.ReceiverAccount }).Select(g => new
+            {
+                ReceiverAccount = g.Key.ReceiverAccount,
+                LastDate = g.Max(row => row.MessageDate)
+            }).OrderByDescending(o => o.LastDate).Take(takeNum).Select(s => s.ReceiverAccount).ToListAsync();
+
+            var lastTalkers = await _context.Talkers.Where(w => uniqueTalkers.Contains(w.AccountId)).Include(i => i.Messages).ToListAsync();
+            lastTalkers = lastTalkers.OrderBy(o => uniqueTalkers.IndexOf(o.AccountId)).ToList();
+            return lastTalkers;
         }
 
         public async Task DeleteTalkerAsync(string accountId)
