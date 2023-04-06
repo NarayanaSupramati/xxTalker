@@ -1,4 +1,4 @@
-﻿using xxTalker.Shared.Models;
+using xxTalker.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace xxTalker.Server.Controllers
@@ -21,6 +21,20 @@ namespace xxTalker.Server.Controllers
             try
             {
                 return await _dataAccessProvider.GetTalkersAsync();
+            }
+            catch (Exception e)
+            {
+                var errMsg = e.InnerException != null ? e.InnerException?.Message : e.Message;
+                return Problem(errMsg);
+            }
+        }
+
+        [HttpGet("{takeNum:int}")]
+        public async Task<ActionResult<IEnumerable<Talker>>> GetLastActiveTalkersAsync(int takeNum)
+        {
+            try
+            {
+                return await _dataAccessProvider.GetLastActiveTalkersAsync(takeNum);
             }
             catch (Exception e)
             {
