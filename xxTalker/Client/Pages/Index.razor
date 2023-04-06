@@ -3,6 +3,7 @@
 @using System.Text.RegularExpressions
 @using System.Text.Json
 @using System.Numerics
+@using System.Threading.Tasks
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 @inject HttpClient HttpClient
@@ -17,18 +18,44 @@
 <PageTitle>xxTalker</PageTitle>
 
 <MudContainer Class="px-8" MaxWidth="MaxWidth.Large">
-    <MudText Typo="Typo.h1" Align="Align.Center" GutterBottom="true">
-        <svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="700.000000pt" height="700.000000pt" style="width:0.55em;height:auto" viewBox="0 0 700.000000 700.000000" preserveAspectRatio="xMidYMid meet">
-            <g transform="translate(0.000000,700.000000) scale(0.100000,-0.100000)" fill="@(isDarkMode ? "#FFFFFF" : "#000000")" stroke="none">
-                <path d="M2154 6371 c0 -343 3 -501 11 -502 5 0 44 -2 85 -4 100 -5 168 -13 274 -31 90 -15 296 -73 353 -99 17 -8 34 -15 38 -15 4 0 55 -24 113 -52 477 -237 793 -654 838 -1107 l6 -67 -63 -57 c-35 -31 -75 -66 -89 -77 -57 -48 -522 -450 -538 -465 -11 -10 -6 -23 23 -74 150 -256 267 -611 309 -936 3 -28 21 -36 36 -17 3 4 52 47 110 97 58 49 116 99 130 111 14 13 81 71 150 130 69 58 139 118 155 133 50 44 50 44 95 -32 184 -310 463 -600 778 -809 157 -104 290 -176 487 -263 73 -33 262 -96 366 -124 100 -27 140 -36 249 -56 14 -3 35 -7 47 -9 11 -3 43 -7 70 -11 26 -4 59 -8 73 -10 52 -7 179 -17 273 -20 l97 -3 0 504 0 504 -62 1 c-99 2 -143 6 -268 24 -350 52 -733 241 -979 484 -185 182 -290 354 -362 591 -11 36 -22 80 -25 99 -3 18 -8 43 -10 55 -5 25 -12 129 -19 293 -20 478 -228 980 -561 1358 -81 92 -223 231 -299 292 -33 26 -69 56 -80 66 -72 66 -348 234 -512 312 -270 128 -571 217 -883 260 -95 13 -126 15 -265 21 l-151 7 0 -502z" />
-                <path d="M6555 6807 c-39 -34 -97 -84 -129 -112 -32 -27 -70 -61 -85 -73 -60 -54 -86 -76 -291 -253 -118 -102 -228 -196 -244 -209 -16 -14 -34 -30 -40 -35 -6 -6 -74 -64 -151 -130 -77 -66 -153 -132 -170 -146 -40 -35 -359 -311 -363 -314 -1 -1 11 -31 26 -67 72 -160 165 -474 187 -633 18 -130 26 -224 29 -332 1 -45 4 -85 7 -88 4 -3 33 18 66 47 33 29 73 64 89 78 158 136 391 337 400 345 14 13 104 91 219 190 50 42 115 99 145 125 30 26 91 78 135 116 44 38 91 79 105 92 14 13 51 44 82 70 l58 47 1 80 c2 237 0 1257 -3 1260 -2 2 -35 -24 -73 -58z" />
-                <path d="M369 4983 c0 -10 -1 -236 -1 -503 l0 -485 53 -1 c107 -2 233 -18 400 -49 40 -8 231 -65 264 -80 17 -7 64 -28 105 -46 262 -116 499 -306 656 -525 66 -93 143 -238 174 -329 l18 -53 -32 -29 c-40 -36 -152 -132 -190 -164 -16 -13 -88 -75 -160 -138 -203 -176 -177 -154 -696 -600 -41 -35 -77 -67 -80 -70 -3 -4 -66 -58 -140 -121 -150 -128 -170 -145 -220 -190 -19 -17 -61 -52 -92 -78 -50 -40 -58 -52 -59 -82 -3 -139 -3 -1310 0 -1310 4 0 192 158 206 174 6 6 39 36 75 66 36 30 67 57 70 60 3 3 34 30 70 60 36 30 67 57 70 60 3 3 84 72 180 154 96 83 182 157 191 165 18 18 34 32 174 151 114 97 153 131 169 145 6 6 94 82 196 170 102 88 249 215 327 282 78 68 145 123 148 123 3 0 27 -46 53 -102 183 -391 499 -751 878 -1003 55 -36 109 -72 122 -81 101 -69 447 -223 632 -282 78 -24 297 -78 360 -87 25 -4 54 -9 65 -12 19 -3 47 -8 125 -18 150 -19 360 -26 362 -11 0 6 2 233 2 504 l2 492 -66 1 c-275 3 -569 78 -835 211 -316 158 -576 420 -711 714 -32 70 -69 181 -79 233 -3 14 -7 35 -9 46 -13 68 -17 113 -21 225 -4 130 -13 254 -20 280 -2 8 -7 36 -10 62 -20 179 -116 465 -224 672 -79 150 -235 379 -315 462 -12 12 -51 52 -87 90 -61 65 -129 129 -209 199 -96 84 -308 226 -450 303 -36 19 -72 39 -80 43 -93 51 -330 145 -488 193 -85 26 -277 71 -347 81 -23 3 -50 7 -61 9 -11 2 -47 7 -79 11 -33 4 -76 9 -95 11 -19 2 -92 7 -162 10 -119 5 -128 4 -129 -13z" />
-            </g>
-        </svg>Talker
-    </MudText>
-    <MudText Typo="Typo.h2" Align="Align.Center" GutterBottom="true">
-        Messaging between xx holders
-    </MudText>
+    <div style="position: relative;height: 13em;margin-bottom: 3em;overflow: hidden;margin-top: 1em;">
+        <div style="position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);min-width: 24em;">
+            <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="false">
+                <svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="835.000000pt" height="1000.000000pt" viewBox="0 0 835.000000 1000.000000" preserveAspectRatio="xMidYMid meet"
+                     style="width: 11em;height: auto;position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);z-index: -1;opacity: 0.3;">
+                    <g transform="translate(0.000000,1000.000000) scale(0.100000,-0.100000)" fill="#6e6ab0" stroke="none">
+                        <path d="M1740 9959 c-96 -4 -191 -10 -210 -13 -19 -3 -91 -14 -160 -25 -69 -11 -152 -26 -185 -35 -119 -29 -181 -47 -212 -62 -17 -7 -36 -14 -42 -14 -22 0 -238 -108 -288 -144 -28 -20 -53 -36 -56 -36 -13 0 -149 -129 -201 -191 -28 -33 -136 -195 -136 -204 0 -2 -15 -37 -34 -77 -70 -152 -116 -353 -148 -648 -19 -170 -19 -6089 0 -6270 42 -407 119 -655 272 -870 65 -92 190 -214 285 -279 79 -53 234 -131 310 -155 28 -9 59 -21 70 -26 23 -11 139 -41 245 -64 93 -20 279 -45 425 -56 61 -5 871 -9 1800 -9 l1690 -1 110 -39 c221 -78 291 -103 322 -117 17 -8 35 -14 39 -14 8 0 80 -27 149 -55 17 -7 45 -16 62 -20 18 -3 35 -11 38 -16 4 -5 14 -9 23 -9 9 -1 35 -9 57 -20 22 -11 46 -19 53 -20 8 0 28 -6 45 -14 60 -25 142 -56 151 -56 4 0 22 -6 39 -14 18 -7 61 -24 97 -36 36 -13 79 -28 95 -35 17 -7 109 -41 205 -75 96 -34 189 -68 207 -76 17 -8 35 -14 39 -14 8 0 80 -27 149 -55 17 -7 45 -16 62 -20 18 -3 35 -11 38 -16 4 -5 15 -9 26 -9 18 0 19 11 19 410 l0 409 43 10 c183 45 427 159 552 259 83 67 245 242 245 265 0 4 16 31 35 61 19 30 35 58 35 61 0 3 12 32 26 63 40 88 42 93 60 157 47 166 79 356 94 555 7 90 10 1161 7 3185 -3 2729 -5 3057 -19 3120 -9 39 -19 102 -23 140 -4 39 -10 75 -15 80 -4 6 -11 31 -14 57 -4 26 -16 72 -27 102 -10 31 -19 62 -19 69 0 8 -6 27 -14 43 -8 16 -24 52 -35 79 -12 28 -26 57 -31 65 -5 8 -24 39 -41 69 -76 128 -212 270 -338 352 -75 48 -217 120 -286 144 -27 9 -59 21 -70 26 -11 5 -47 17 -80 25 -33 8 -87 22 -120 30 -33 9 -89 20 -125 25 -36 5 -105 16 -155 24 -49 8 -198 19 -330 25 -281 12 -4538 11 -4805 -1z m4855 -912 c120 -21 184 -35 220 -48 130 -50 231 -122 283 -203 36 -57 71 -128 72 -147 0 -8 4 -19 9 -25 5 -5 19 -62 30 -126 20 -111 21 -154 22 -880 1 -420 5 -839 9 -933 9 -181 34 -415 49 -443 4 -9 11 -37 15 -61 7 -47 40 -155 56 -183 6 -10 10 -23 10 -30 0 -16 66 -147 104 -206 29 -47 142 -179 191 -224 16 -16 69 -56 118 -90 48 -34 87 -67 87 -74 0 -7 -21 -27 -47 -45 -85 -57 -104 -73 -197 -164 -50 -50 -112 -122 -138 -160 -47 -71 -108 -182 -108 -198 0 -5 -6 -23 -14 -40 -26 -60 -55 -152 -65 -210 -6 -32 -13 -62 -16 -67 -11 -18 -38 -265 -45 -425 -4 -93 -8 -516 -9 -938 -1 -807 -3 -841 -48 -992 -20 -68 -64 -165 -74 -165 -5 0 -9 -6 -9 -12 0 -44 -204 -198 -262 -198 -8 0 -19 -5 -24 -10 -10 -10 -89 -28 -229 -53 -102 -18 -4718 -18 -4820 0 -182 32 -233 46 -325 91 -61 30 -139 93 -174 141 -41 57 -86 141 -86 161 0 9 -4 20 -9 26 -5 5 -19 61 -32 124 -23 113 -23 129 -30 1050 -5 761 -9 957 -22 1055 -8 66 -20 131 -25 145 -5 14 -13 50 -17 80 -4 30 -11 61 -16 70 -5 8 -20 51 -35 95 -67 201 -237 433 -395 540 -24 17 -48 33 -54 38 -5 4 -23 17 -38 28 -15 12 -27 27 -25 34 2 7 49 46 104 88 162 122 269 246 348 405 45 89 103 255 112 317 3 28 10 57 15 67 5 9 16 76 26 150 14 113 18 276 23 1068 7 909 8 938 29 1035 85 393 262 518 791 558 25 2 1064 3 2310 2 2009 -2 2275 -4 2355 -18z" />
+                        <path d="M2357 5929 c-106 -15 -244 -111 -289 -201 -50 -100 -53 -111 -53 -218 0 -98 2 -109 32 -170 44 -89 113 -162 198 -207 69 -37 71 -37 186 -38 117 0 117 0 194 40 128 66 205 169 226 304 29 192 -54 361 -222 451 -48 25 -163 53 -204 49 -5 -1 -36 -5 -68 -10z" />
+                        <path d="M4101 5930 c-116 -17 -250 -117 -299 -222 -68 -146 -67 -268 5 -403 32 -62 119 -142 192 -178 63 -30 71 -32 181 -32 104 1 121 3 173 28 149 70 247 221 249 382 2 273 -226 466 -501 425z" />
+                        <path d="M5850 5930 c-125 -17 -251 -112 -312 -237 -31 -64 -33 -74 -33 -178 0 -128 15 -174 89 -271 29 -39 123 -114 143 -114 4 0 22 -8 38 -17 24 -14 55 -18 145 -18 110 0 118 1 183 33 253 124 321 443 142 664 -24 29 -105 88 -155 112 -30 15 -147 38 -175 34 -5 0 -35 -4 -65 -8z" />
+                    </g>
+                </svg>
+            </MudHidden>
+            <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true">
+                <svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="835.000000pt" height="1000.000000pt" viewBox="0 0 835.000000 1000.000000" preserveAspectRatio="xMidYMid meet"
+                     style="width: 11em;height: auto;position: absolute;left: -30%;top: 50%;transform: translate(-50%, -50%);z-index: -1;opacity: 1;">
+                    <g transform="translate(0.000000,1000.000000) scale(0.100000,-0.100000)" fill="#6e6ab0" stroke="none">
+                        <path d="M1740 9959 c-96 -4 -191 -10 -210 -13 -19 -3 -91 -14 -160 -25 -69 -11 -152 -26 -185 -35 -119 -29 -181 -47 -212 -62 -17 -7 -36 -14 -42 -14 -22 0 -238 -108 -288 -144 -28 -20 -53 -36 -56 -36 -13 0 -149 -129 -201 -191 -28 -33 -136 -195 -136 -204 0 -2 -15 -37 -34 -77 -70 -152 -116 -353 -148 -648 -19 -170 -19 -6089 0 -6270 42 -407 119 -655 272 -870 65 -92 190 -214 285 -279 79 -53 234 -131 310 -155 28 -9 59 -21 70 -26 23 -11 139 -41 245 -64 93 -20 279 -45 425 -56 61 -5 871 -9 1800 -9 l1690 -1 110 -39 c221 -78 291 -103 322 -117 17 -8 35 -14 39 -14 8 0 80 -27 149 -55 17 -7 45 -16 62 -20 18 -3 35 -11 38 -16 4 -5 14 -9 23 -9 9 -1 35 -9 57 -20 22 -11 46 -19 53 -20 8 0 28 -6 45 -14 60 -25 142 -56 151 -56 4 0 22 -6 39 -14 18 -7 61 -24 97 -36 36 -13 79 -28 95 -35 17 -7 109 -41 205 -75 96 -34 189 -68 207 -76 17 -8 35 -14 39 -14 8 0 80 -27 149 -55 17 -7 45 -16 62 -20 18 -3 35 -11 38 -16 4 -5 15 -9 26 -9 18 0 19 11 19 410 l0 409 43 10 c183 45 427 159 552 259 83 67 245 242 245 265 0 4 16 31 35 61 19 30 35 58 35 61 0 3 12 32 26 63 40 88 42 93 60 157 47 166 79 356 94 555 7 90 10 1161 7 3185 -3 2729 -5 3057 -19 3120 -9 39 -19 102 -23 140 -4 39 -10 75 -15 80 -4 6 -11 31 -14 57 -4 26 -16 72 -27 102 -10 31 -19 62 -19 69 0 8 -6 27 -14 43 -8 16 -24 52 -35 79 -12 28 -26 57 -31 65 -5 8 -24 39 -41 69 -76 128 -212 270 -338 352 -75 48 -217 120 -286 144 -27 9 -59 21 -70 26 -11 5 -47 17 -80 25 -33 8 -87 22 -120 30 -33 9 -89 20 -125 25 -36 5 -105 16 -155 24 -49 8 -198 19 -330 25 -281 12 -4538 11 -4805 -1z m4855 -912 c120 -21 184 -35 220 -48 130 -50 231 -122 283 -203 36 -57 71 -128 72 -147 0 -8 4 -19 9 -25 5 -5 19 -62 30 -126 20 -111 21 -154 22 -880 1 -420 5 -839 9 -933 9 -181 34 -415 49 -443 4 -9 11 -37 15 -61 7 -47 40 -155 56 -183 6 -10 10 -23 10 -30 0 -16 66 -147 104 -206 29 -47 142 -179 191 -224 16 -16 69 -56 118 -90 48 -34 87 -67 87 -74 0 -7 -21 -27 -47 -45 -85 -57 -104 -73 -197 -164 -50 -50 -112 -122 -138 -160 -47 -71 -108 -182 -108 -198 0 -5 -6 -23 -14 -40 -26 -60 -55 -152 -65 -210 -6 -32 -13 -62 -16 -67 -11 -18 -38 -265 -45 -425 -4 -93 -8 -516 -9 -938 -1 -807 -3 -841 -48 -992 -20 -68 -64 -165 -74 -165 -5 0 -9 -6 -9 -12 0 -44 -204 -198 -262 -198 -8 0 -19 -5 -24 -10 -10 -10 -89 -28 -229 -53 -102 -18 -4718 -18 -4820 0 -182 32 -233 46 -325 91 -61 30 -139 93 -174 141 -41 57 -86 141 -86 161 0 9 -4 20 -9 26 -5 5 -19 61 -32 124 -23 113 -23 129 -30 1050 -5 761 -9 957 -22 1055 -8 66 -20 131 -25 145 -5 14 -13 50 -17 80 -4 30 -11 61 -16 70 -5 8 -20 51 -35 95 -67 201 -237 433 -395 540 -24 17 -48 33 -54 38 -5 4 -23 17 -38 28 -15 12 -27 27 -25 34 2 7 49 46 104 88 162 122 269 246 348 405 45 89 103 255 112 317 3 28 10 57 15 67 5 9 16 76 26 150 14 113 18 276 23 1068 7 909 8 938 29 1035 85 393 262 518 791 558 25 2 1064 3 2310 2 2009 -2 2275 -4 2355 -18z" />
+                        <path d="M2357 5929 c-106 -15 -244 -111 -289 -201 -50 -100 -53 -111 -53 -218 0 -98 2 -109 32 -170 44 -89 113 -162 198 -207 69 -37 71 -37 186 -38 117 0 117 0 194 40 128 66 205 169 226 304 29 192 -54 361 -222 451 -48 25 -163 53 -204 49 -5 -1 -36 -5 -68 -10z" />
+                        <path d="M4101 5930 c-116 -17 -250 -117 -299 -222 -68 -146 -67 -268 5 -403 32 -62 119 -142 192 -178 63 -30 71 -32 181 -32 104 1 121 3 173 28 149 70 247 221 249 382 2 273 -226 466 -501 425z" />
+                        <path d="M5850 5930 c-125 -17 -251 -112 -312 -237 -31 -64 -33 -74 -33 -178 0 -128 15 -174 89 -271 29 -39 123 -114 143 -114 4 0 22 -8 38 -17 24 -14 55 -18 145 -18 110 0 118 1 183 33 253 124 321 443 142 664 -24 29 -105 88 -155 112 -30 15 -147 38 -175 34 -5 0 -35 -4 -65 -8z" />
+                    </g>
+                </svg>
+            </MudHidden>
+            <MudText Typo="Typo.h1" Align="Align.Center" GutterBottom="true" Style="font-weight: 600;">
+                <svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="700.000000pt" height="700.000000pt" style="width:0.7em;height:auto;margin-right: 4px;" viewBox="0 0 700.000000 700.000000" preserveAspectRatio="xMidYMid meet">
+                    <g transform="translate(0.000000,700.000000) scale(0.100000,-0.100000)" fill="#6e6ab0" stroke="none">
+                        <path d="M2154 6371 c0 -343 3 -501 11 -502 5 0 44 -2 85 -4 100 -5 168 -13 274 -31 90 -15 296 -73 353 -99 17 -8 34 -15 38 -15 4 0 55 -24 113 -52 477 -237 793 -654 838 -1107 l6 -67 -63 -57 c-35 -31 -75 -66 -89 -77 -57 -48 -522 -450 -538 -465 -11 -10 -6 -23 23 -74 150 -256 267 -611 309 -936 3 -28 21 -36 36 -17 3 4 52 47 110 97 58 49 116 99 130 111 14 13 81 71 150 130 69 58 139 118 155 133 50 44 50 44 95 -32 184 -310 463 -600 778 -809 157 -104 290 -176 487 -263 73 -33 262 -96 366 -124 100 -27 140 -36 249 -56 14 -3 35 -7 47 -9 11 -3 43 -7 70 -11 26 -4 59 -8 73 -10 52 -7 179 -17 273 -20 l97 -3 0 504 0 504 -62 1 c-99 2 -143 6 -268 24 -350 52 -733 241 -979 484 -185 182 -290 354 -362 591 -11 36 -22 80 -25 99 -3 18 -8 43 -10 55 -5 25 -12 129 -19 293 -20 478 -228 980 -561 1358 -81 92 -223 231 -299 292 -33 26 -69 56 -80 66 -72 66 -348 234 -512 312 -270 128 -571 217 -883 260 -95 13 -126 15 -265 21 l-151 7 0 -502z" />
+                        <path d="M6555 6807 c-39 -34 -97 -84 -129 -112 -32 -27 -70 -61 -85 -73 -60 -54 -86 -76 -291 -253 -118 -102 -228 -196 -244 -209 -16 -14 -34 -30 -40 -35 -6 -6 -74 -64 -151 -130 -77 -66 -153 -132 -170 -146 -40 -35 -359 -311 -363 -314 -1 -1 11 -31 26 -67 72 -160 165 -474 187 -633 18 -130 26 -224 29 -332 1 -45 4 -85 7 -88 4 -3 33 18 66 47 33 29 73 64 89 78 158 136 391 337 400 345 14 13 104 91 219 190 50 42 115 99 145 125 30 26 91 78 135 116 44 38 91 79 105 92 14 13 51 44 82 70 l58 47 1 80 c2 237 0 1257 -3 1260 -2 2 -35 -24 -73 -58z" />
+                        <path d="M369 4983 c0 -10 -1 -236 -1 -503 l0 -485 53 -1 c107 -2 233 -18 400 -49 40 -8 231 -65 264 -80 17 -7 64 -28 105 -46 262 -116 499 -306 656 -525 66 -93 143 -238 174 -329 l18 -53 -32 -29 c-40 -36 -152 -132 -190 -164 -16 -13 -88 -75 -160 -138 -203 -176 -177 -154 -696 -600 -41 -35 -77 -67 -80 -70 -3 -4 -66 -58 -140 -121 -150 -128 -170 -145 -220 -190 -19 -17 -61 -52 -92 -78 -50 -40 -58 -52 -59 -82 -3 -139 -3 -1310 0 -1310 4 0 192 158 206 174 6 6 39 36 75 66 36 30 67 57 70 60 3 3 34 30 70 60 36 30 67 57 70 60 3 3 84 72 180 154 96 83 182 157 191 165 18 18 34 32 174 151 114 97 153 131 169 145 6 6 94 82 196 170 102 88 249 215 327 282 78 68 145 123 148 123 3 0 27 -46 53 -102 183 -391 499 -751 878 -1003 55 -36 109 -72 122 -81 101 -69 447 -223 632 -282 78 -24 297 -78 360 -87 25 -4 54 -9 65 -12 19 -3 47 -8 125 -18 150 -19 360 -26 362 -11 0 6 2 233 2 504 l2 492 -66 1 c-275 3 -569 78 -835 211 -316 158 -576 420 -711 714 -32 70 -69 181 -79 233 -3 14 -7 35 -9 46 -13 68 -17 113 -21 225 -4 130 -13 254 -20 280 -2 8 -7 36 -10 62 -20 179 -116 465 -224 672 -79 150 -235 379 -315 462 -12 12 -51 52 -87 90 -61 65 -129 129 -209 199 -96 84 -308 226 -450 303 -36 19 -72 39 -80 43 -93 51 -330 145 -488 193 -85 26 -277 71 -347 81 -23 3 -50 7 -61 9 -11 2 -47 7 -79 11 -33 4 -76 9 -95 11 -19 2 -92 7 -162 10 -119 5 -128 4 -129 -13z" />
+                    </g>
+                </svg>Talker
+            </MudText>
+            <MudText Typo="Typo.h2" Align="Align.Center" GutterBottom="true" Style="margin-top: -2em;font-size: x-large;font-weight: 500;">
+                Messaging between xx holders
+            </MudText>
+        </div>
+    </div>
 
     <MudGrid>
         <MudItem xs="12">
@@ -51,21 +78,21 @@
 
             <MudCard Class="@(showAccountData ? "" : "d-none")">
                 <MudCardContent>
+                    <MudText Typo="Typo.h6" Style="word-break: break-all;font-weight: 100;" Class="@(string.IsNullOrEmpty(xxAccount?.identity?.display) ? "d-none" : "")">
+                        @xxAccount?.identity?.display
+                    </MudText>
                     <MudText Typo="Typo.h5" Style="word-break: break-all;">
                         @xxAccount?.id
                         <MudLink Href="@("account/" + xxAccount?.id)">
                             <MudIcon Icon="@Icons.Material.Outlined.RemoveRedEye" Size="Size.Medium" Style="vertical-align: text-bottom;" />
                         </MudLink>
                     </MudText>
-                    <MudText Typo="Typo.h6" Style="word-break: break-all;font-weight: 100;" Class="@(string.IsNullOrEmpty(xxAccount?.identity?.display) ? "d-none" : "")">
-                        @xxAccount?.identity?.display
-                    </MudText>
                     <MudText Typo="Typo.body2" Class="d-inline" Style="font-weight: 100;">
                         Role: <b>@GetRole(xxAccount)</b>
                         &nbsp;&nbsp;
                     </MudText>
                     <MudText Typo="Typo.body2" Class="d-inline" Style="font-weight: 100;">
-                        Balance: <b>@GetFormattedBalance().Item1</b>@GetFormattedBalance().Item2
+                        Balance: <b>@GetFormattedBalance(xxAccount).Item1</b>@GetFormattedBalance(xxAccount).Item2
                         &nbsp;&nbsp;
                     </MudText>
                     <MudText Typo="Typo.body2" Class="d-inline" Style="font-weight: 100;">
@@ -76,8 +103,8 @@
                         </MudElement>
                     </MudText>
                     <MudText Typo="Typo.body1" Class="@(string.IsNullOrEmpty(talker?.Info) ? "d-none" : "mt-4")">
-                        <MudIcon Icon="@Icons.Material.Outlined.Info" Size="Size.Small" Color="Color.Default" Style="vertical-align: text-bottom;" />
-                        @(string.IsNullOrEmpty(talker?.Info) ? "" : talker.Info)
+                        <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" Color="Color.Default" Style="vertical-align: text-bottom;" />
+                        <Lines InputString="@talker?.Info" />
                     </MudText>
                     <div class="d-flex flex-grow-1 gap-2 flex-wrap align-center">
                         <div class="pt-2">
@@ -110,7 +137,7 @@
     <MudGrid Class="justify-center">
         <MudItem xs="12">
             <MudText Typo="Typo.h5" Align="Align.Center" GutterBottom="true" Style="font-weight: lighter;">
-                LAST MESSAGES
+                Last Activity
             </MudText>
             <MudText Typo="Typo.h6" Align="Align.Center" GutterBottom="true" Style="font-weight: lighter;">
                 filter:
@@ -123,116 +150,155 @@
             </MudText>
             <MudProgressLinear Color="Color.Default" Indeterminate="true" Class="@(showMessagesLoader ? "" : "d-none")" />
         </MudItem>
-        @if (talkersMessages != null && talkersMessages.Any())
-                {
-        var lastMessages = talkersMessages.OrderByDescending(o => o.MessageDate).Take(100);
-        foreach (var msg in lastMessages)
-        {
-            bool isObsoleteInfo = false;
-            var receiversInfoList = lastMessages.GroupBy(g => g.ReceiverAccount).Select(group => new { Receiver = group.Key, LastInfo = group.OrderByDescending(o => o.MessageDate).FirstOrDefault(m => m.MessageType == MessageType.Info) });
-            if (msg.MessageType == MessageType.Info)
+        @if (lastActiveTalkers != null && lastActiveTalkers.Any())
+        {            
+            foreach (var activeTalker in lastActiveTalkers)
             {
-                if (receiversInfoList.Any(s => s.Receiver == msg.ReceiverAccount && s.LastInfo != msg))
+
+                var xxAccount = xxAccounts?.FirstOrDefault(x => x.id == activeTalker.AccountId);
+                var lastMessages = activeTalker.Messages.OrderByDescending(o => o.MessageDate);
+
+                //var accIdentity = lastMessages.FirstOrDefault()?.ReceiverIdentity;
+                //var accRole = lastMessages.FirstOrDefault()?.ReceiverRole;
+                var accIdentity = xxAccount?.identity?.display;
+                var accRole = GetRole(xxAccount);
+                
+                var ava = "H";
+                if (!string.IsNullOrEmpty(accRole))
                 {
-                    isObsoleteInfo = true;
+                    var roles = accRole.Split(",").Select(r => r.Trim());
+                    ava = roles.Contains("Validator") ? "V" : (roles.Contains("Nominator") ? "N" : "H");
                 }
-            }
-            bool isObsoleteRate = false;
-            var sendersRateList = lastMessages.GroupBy(g => g.SenderAccount).Select(group => new { Sender = group.Key, LastRate = group.OrderByDescending(o => o.MessageDate).FirstOrDefault(m => m.MessageType == MessageType.Rating) });
-            if (msg.MessageType == MessageType.Rating)
-            {
-                if (sendersRateList.Any(s => s.Sender == msg.SenderAccount && s.LastRate != msg))
-                {
-                    isObsoleteRate = true;
-                }
-            }
-            var own = msg.SenderAccount == null || msg.SenderAccount == msg.ReceiverAccount;
-            var ava = "H";
-            if (own && !string.IsNullOrEmpty(msg.ReceiverRole))
-            {
-                var roles = msg.ReceiverRole.Split(",").Select(r => r.Trim());
-                ava = roles.Contains("Validator") ? "V" : (roles.Contains("Nominator") ? "N" : "H");
-            }
-            else if (!own && !string.IsNullOrEmpty(msg.SenderRole))
-            {
-                var roles = msg.SenderRole.Split(",").Select(r => r.Trim());
-                ava = roles.Contains("Validator") ? "V" : (roles.Contains("Nominator") ? "N" : "H");
-            }
-            var crown = @"
-        <svg style=""width:1em;height:1em;"" viewBox=""0 0 24 24"" fill=""none"" xmlns=""http://www.w3.org/2000/svg"">
-        <path d=""M4 19H20M4 5V16H20V5L16 9L12 5L8 9L4 5Z"" stroke=""#ffffff"" stroke-width=""2.0"" stroke-linecap=""round"" stroke-linejoin=""round""/>
-        </svg>";
-            <MudItem md="6" xs="12" Class="@(filterObsolete && (isObsoleteInfo || isObsoleteRate) || filterRating && msg.MessageType != MessageType.Rating ? "d-none" : "")">
-                <MudCard Class="relative">
-                        <MudOverlay Visible="isObsoleteInfo || isObsoleteRate" LightBackground="!isDarkMode" DarkBackground="isDarkMode" Absolute="true">
-                        </MudOverlay>
+
+                <MudItem xs="12">
+                    <MudCard>
                         <MudCardHeader Class="pb-0">
                             <CardHeaderAvatar>
-                                <MudAvatar Color="@(ava == "H" ? Color.Surface : (ava == "V" ? Color.Success : Color.Info))">
-                                    @*@if (own && msg.MessageType != MessageType.Info)
-                                    {
-                                        <MudIcon Icon="@crown" />
-                                    }
-                                    else
-                                    {
-                                        @ava
-                                    }*@
+                                <MudAvatar Color="@(ava == "H" ? Color.Surface : (ava == "V" ? Color.Tertiary : Color.Info))">
                                     @ava
                                 </MudAvatar>
                             </CardHeaderAvatar>
                             <CardHeaderContent>
-                                @if (own)
-                                {
-                                    <MudText Typo="Typo.button" Class="@(string.IsNullOrEmpty(msg.ReceiverIdentity) ? "d-none" : "")">
-                                        @msg.ReceiverIdentity
-                                    </MudText>
-                                    <MudText Typo="Typo.body2" Style="word-break: break-all;">
-                                        @msg.ReceiverAccount
-                                        <MudLink Href="@("account/" + msg.ReceiverAccount)">
-                                            <MudIcon Icon="@Icons.Material.Outlined.RemoveRedEye" Size="Size.Small" Style="vertical-align: middle;" />
-                                        </MudLink>
-                                    </MudText>
-                                }
-                                else
-                                {
-                                    <MudText Typo="Typo.button" Class="@(string.IsNullOrEmpty(msg.SenderIdentity) ? "d-none" : "")">
-                                        @msg.SenderIdentity
-                                    </MudText>
-                                    <MudText Typo="Typo.body2" Style="word-break: break-all;">
-                                        @msg.SenderAccount
-                                    </MudText>
-                                }
-                                <div class="d-flex flex-wrap pt-1">
-                                    <MudText Typo="Typo.overline" Class="pr-2" Style="line-height:var(--mud-typography-body2-lineheight);">
-                                        @msg.MessageDate.ToLocalTime()
-                                    </MudText>
-                                    <MudText Typo="Typo.overline" Style="line-height:var(--mud-typography-body2-lineheight);">
-                                        <b>@msg.MessageDate.TimeAgo()</b>
-                                    </MudText>
+                                <MudText Typo="Typo.h6" Style="word-break: break-all;font-weight: 500;" Class="@(string.IsNullOrEmpty(accIdentity) ? "d-none" : "")">
+                                    @accIdentity
+                                </MudText>
+                                <MudText Typo="Typo.h6" Class="mb-n1" Style="@(string.IsNullOrEmpty(accIdentity) ? "word-break: break-all;font-weight: 500;" : "word-break: break-all;font-weight: 100;")">
+                                    @activeTalker.AccountId
+                                    <MudLink Href="@("account/" + activeTalker.AccountId)">
+                                        <MudIcon Icon="@Icons.Material.Outlined.RemoveRedEye" Size="Size.Small" Style="vertical-align: text-bottom;" />
+                                    </MudLink>
+                                </MudText>
+                                @*TODO: add live*@
+                                <MudText Typo="Typo.body2" Class="d-inline" Style="font-weight: 100;">
+                                    Role: <b>@accRole</b>
+                                    &nbsp;&nbsp;
+                                </MudText>
+                                <MudText Typo="Typo.body2" Class="d-inline" Style="font-weight: 100;">
+                                    Balance: <b>@GetFormattedBalance(xxAccount).Item1</b>@GetFormattedBalance(xxAccount).Item2
+                                    &nbsp;&nbsp;
+                                </MudText>
+                                <MudText Typo="Typo.body2" Class="d-inline" Style="font-weight: 100;">
+                                    Total messages: <b>@activeTalker.Messages.Count</b>
+                                </MudText>
+                                <MudText Typo="Typo.body1" Class="@(string.IsNullOrEmpty(activeTalker.Info) ? "d-none" : (isDarkMode ? "darkBack" : "lightBack") + " mt-2 border-r-4 mud-border-primary")">
+                                    <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" Color="Color.Default" Style="vertical-align: text-bottom;" />
+                                    <Lines InputString="@activeTalker.Info" />
+                                </MudText>
+                                <div class="d-flex flex-grow-1 gap-2 flex-wrap align-center">
+                                    <div class="pt-2">
+                                        <MudRating ReadOnly="true" SelectedValue="@activeTalker.RatingInt" Disabled="@(activeTalker.Rating == "0.00")" />
+                                    </div>
+                                    <div class="flex-grow-1 pt-2">
+                                        <MudText Typo="Typo.button">@(activeTalker.Rating == "0.00" ? "" : activeTalker.Rating)</MudText>
+                                    </div>
                                 </div>
                             </CardHeaderContent>
                         </MudCardHeader>
                         <MudCardContent>
-                            @if (!own)
+                            @foreach (var msg in lastMessages.Take(3))
                             {
-                                <MudText Typo="Typo.body2" Class="pb-2" Style="word-break: break-all;">
-                                    <b>To:</b>
-                                    @msg.ReceiverAccount
-                                    <MudLink Href="@("account/" + msg.ReceiverAccount)">
-                                        <MudIcon Icon="@Icons.Material.Outlined.RemoveRedEye" Size="Size.Small" Style="vertical-align: middle;" />
-                                    </MudLink>
-                                </MudText>
+                                bool isObsoleteInfo = false;
+                                var lastInfo = activeTalker.Messages.OrderByDescending(o => o.MessageDate).FirstOrDefault(m => m.MessageType == MessageType.Info);
+                                if (msg.MessageType == MessageType.Info && lastInfo != msg)
+                                {
+                                    isObsoleteInfo = true;
+                                }
+                                bool isObsoleteRate = false;
+                                var lastRate = activeTalker.Messages.OrderByDescending(o => o.MessageDate).FirstOrDefault(m => m.MessageType == MessageType.Rating);
+                                if (msg.MessageType == MessageType.Rating && lastRate != msg)
+                                {
+                                    isObsoleteRate = true;
+                                }
+
+                                var own = msg.SenderAccount == null || msg.SenderAccount == msg.ReceiverAccount;
+                                var ava = "H";
+                                if (own && !string.IsNullOrEmpty(msg.ReceiverRole))
+                                {
+                                    var roles = msg.ReceiverRole.Split(",").Select(r => r.Trim());
+                                    ava = roles.Contains("Validator") ? "V" : (roles.Contains("Nominator") ? "N" : "H");
+                                }
+                                else if (!own && !string.IsNullOrEmpty(msg.SenderRole))
+                                {
+                                    var roles = msg.SenderRole.Split(",").Select(r => r.Trim());
+                                    ava = roles.Contains("Validator") ? "V" : (roles.Contains("Nominator") ? "N" : "H");
+                                }
+                                var crown = @"<svg style=""width:1em;height:1em;"" viewBox=""0 0 24 24"" fill=""none"" xmlns=""http://www.w3.org/2000/svg""><path d=""M4 19H20M4 5V16H20V5L16 9L12 5L8 9L4 5Z"" stroke=""#ffffff"" stroke-width=""2.0"" stroke-linecap=""round"" stroke-linejoin=""round""/></svg>";
+
+                                <MudTimeline TimelinePosition="TimelinePosition.Start" Class="pt-0">
+                                    <MudTimelineItem Size="Size.Medium" Variant="Variant.Outlined"
+                                            Class="@(filterObsolete && (isObsoleteInfo || isObsoleteRate) || filterRating && msg.MessageType != MessageType.Rating ? "d-none" : "")">
+                                        <ItemDot>
+                                            <MudAvatar Color="@(ava == "H" ? Color.Surface : (ava == "V" ? Color.Tertiary : Color.Info))">
+                                                @if (own)
+                                                {
+                                                    <MudIcon Icon="@crown" />
+                                                }
+                                                else
+                                                {
+                                                    @ava
+                                                }
+                                            </MudAvatar>
+                                        </ItemDot>
+                                        <ChildContent>
+                                            <MudCard Class="relative" Outlined="true">
+                                                <MudOverlay Visible="isObsoleteInfo || isObsoleteRate" LightBackground="!isDarkMode" DarkBackground="isDarkMode" Absolute="true">
+                                                </MudOverlay>
+                                                <MudCardContent>
+                                                    <div class="d-flex flex-wrap pb-2">
+                                                        <MudText Typo="Typo.overline" Class="pr-2" Style="line-height:var(--mud-typography-body2-lineheight);">
+                                                            @msg.MessageDate.ToLocalTime()
+                                                        </MudText>
+                                                        <MudText Typo="Typo.overline" Style="line-height:var(--mud-typography-body2-lineheight);">
+                                                            <b>@msg.MessageDate.TimeAgo()</b>
+                                                        </MudText>
+                                                    </div>
+                                                    @if (!own)
+                                                    {
+                                                        <MudText Typo="Typo.button" Class="@(string.IsNullOrEmpty(msg.SenderIdentity) ? "d-none" : "")">
+                                                            @msg.SenderIdentity
+                                                        </MudText>
+                                                        <MudText Typo="Typo.body2" Style="word-break: break-all;">
+                                                            <b>From:</b>
+                                                            @msg.SenderAccount
+                                                        </MudText>
+                                                    }
+                                                    <MudText Typo="Typo.body2">
+                                                        <b>@(msg.MessageType == MessageType.Info ? "Info update" : "Message"):</b>
+                                                        <Lines InputString="@msg.Message" />
+                                                    </MudText>
+                                                    <div class="@(msg.MessageType == MessageType.Rating ? "pt-2 mb-n2" : "d-none")">
+                                                        <MudRating ReadOnly="true" SelectedValue="@msg.Rating" Size="Size.Small" />
+                                                    </div>
+                                                    <MudText Typo="Typo.overline" Color="Color.Default" Class="absolute pr-1" Style="bottom:-6px;right:0;">
+                                                        @(isObsoleteInfo || isObsoleteRate ? "obsolete" : "")
+                                                    </MudText>
+                                                </MudCardContent>
+                                            </MudCard>
+                                        </ChildContent>
+
+                                    </MudTimelineItem>
+                                </MudTimeline>                                
                             }
-                            <MudText Typo="Typo.body2">
-                                <b>@(msg.MessageType == MessageType.Info ? "Info update" : "Message"):</b>
-                                <Lines InputString="@msg.Message" />
-                            </MudText>
-                            <div class="pt-2">
-                                <MudRating ReadOnly="true" SelectedValue="@msg.Rating" Size="Size.Small" Class="@(msg.MessageType == MessageType.Rating ? "" : "d-none")" />
-                            </div>
-                            <MudText Typo="Typo.overline" Color="Color.Default" Class="absolute pr-1" Style="bottom:-6px;right:0;">
-                                @(isObsoleteInfo || isObsoleteRate ? "obsolete" : "")
-                            </MudText>
                         </MudCardContent>
                     </MudCard>
                 </MudItem>
@@ -249,8 +315,9 @@
     string searchAccountId { get; set; } = string.Empty;
     AccountXXNetwork? xxAccount;
     AccountXXNetwork? senderAccount;
+    List<AccountXXNetwork>? xxAccounts;
     Talker? talker;
-    List<TalkerMessage>? talkersMessages;
+    List<Talker>? lastActiveTalkers;
     bool showSkeleton { get; set; }
     bool showAccountData { get; set; }
     bool showNotFound { get; set; }
@@ -280,7 +347,7 @@
             hubConnection.On<string>("NewAccountMessage", async (receiverAccount) =>
             {
                 Snackbar.Add($"New message for {receiverAccount}", Severity.Info);
-                await Task.Run(() => GetMessagesAsync());
+                await Task.Run(() => GetLastActiveTalkersAsync());
             });
 
             await hubConnection.StartAsync();
@@ -309,7 +376,7 @@
         if (!string.IsNullOrEmpty(strFilterRating))
             filterRating = bool.Parse(strFilterRating.Replace("'", string.Empty));
 
-        await Task.Run(() => GetMessagesAsync());
+        await Task.Run(() => GetLastActiveTalkersAsync());
     }
 
     private String AccountMatch(String accountAddress)
@@ -396,6 +463,62 @@
         StateHasChanged();
     }
 
+    private async Task LoadXXAccountAsync()
+    {
+        if (lastActiveTalkers != null)
+        {
+
+            xxAccounts = new List<AccountXXNetwork>();
+            foreach (var activeTalkers in lastActiveTalkers)
+            {
+                var xxAccount = await GetAccountXXDataAsync(activeTalkers.AccountId);
+                if (xxAccount != null)
+                {
+                    xxAccounts.Add(xxAccount);
+                }
+            }
+        }
+    }
+
+    private async Task<AccountXXNetwork?> GetAccountXXDataAsync(string xxAccountId)
+    {
+        AccountXXNetwork? xxAccount = null;
+        var postBody = new
+        {
+            operationName = "GetAccountByPK",
+            variables = new { accountId = xxAccountId },
+            query = "fragment identity on identity {\n  blurb\n  display\n  discord\n  displayParent: display_parent\n  email\n  judgements\n  legal\n  riot\n  twitter\n  verified\n  web\n  __typename\n}\n\nfragment roles_fragment on account {\n  techcommit\n  special\n  nominator\n  council\n  validator\n  __typename\n}\n\nfragment account on account {\n  id: account_id\n  controllerAddress: controller_address\n  active\n  whenCreated: when_created\n  whenKilled: when_killed\n  blockHeight: block_height\n  identity {\n    ...identity\n    __typename\n  }\n  nonce\n  timestamp\n  ...roles_fragment\n  lockedBalance: locked_balance\n  reservedBalance: reserved_balance\n  totalBalance: total_balance\n  bondedBalance: bonded_balance\n  councilBalance: council_balance\n  democracyBalance: democracy_balance\n  transferrableBalance: transferrable_balance\n  unbondingBalance: unbonding_balance\n  vestingBalance: vesting_balance\n  __typename\n}\n\nquery GetAccountByPK($accountId: String!) {\n  account: account_by_pk(account_id: $accountId) {\n    ...account\n    __typename\n  }\n}"
+        };
+        try
+        {
+            using var response = await HttpClient.PostAsJsonAsync("https://xxexplorer-prod.hasura.app/v1/graphql", postBody);
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"GetAccountXXDataAsync: {response.ReasonPhrase}");
+                return null;
+            }
+            else
+            {
+                JsonElement jData = await response.Content.ReadFromJsonAsync<JsonElement>();
+                JsonElement acc = jData.GetProperty("data").GetProperty("account");
+                if (acc.ValueKind != JsonValueKind.Null)
+                {
+                    var options = new JsonSerializerOptions();
+                    options.Converters.Add(new BigIntegerConverter());
+
+                    xxAccount = acc.Deserialize<AccountXXNetwork>(options);
+                }
+            }
+        }
+        catch (ApplicationException e)
+        {
+            var errMsg = e.InnerException != null ? e.InnerException?.Message : e.Message;
+            Console.WriteLine($"GetAccountXXDataAsync->Exception: {errMsg}");
+            return null;
+        }
+        return xxAccount;
+    }
+
     private async void GetTalkerAsync(string accountId)
     {
         //await Task.Delay(5000);
@@ -416,33 +539,34 @@
         }
         showLoader = false;
         StateHasChanged();
-        await Task.Run(() => GetMessagesAsync());
+        await Task.Run(() => GetLastActiveTalkersAsync());
     }
 
-    private async void GetMessagesAsync()
+    private async void GetLastActiveTalkersAsync(int takeNum = 10)
     {
         showMessagesLoader = true;
         StateHasChanged();
 
         var client = ClientFactory.CreateClient("xxTalker.ServerAPI");
-        var response = await client.GetAsync($"api/Messages");
+        var response = await client.GetAsync($"api/Talkers/{takeNum}");
         var responseContent = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
-            errorMessage = $"GetMessagesAsync: {responseContent}";
+            errorMessage = $"GetLastActiveTalkersAsync: {responseContent}";
         }
         else
         {
             if (!string.IsNullOrEmpty(responseContent))
             {
-                talkersMessages = await response.Content.ReadFromJsonAsync<List<TalkerMessage>>();
+                lastActiveTalkers = await response.Content.ReadFromJsonAsync<List<Talker>>();
+                await Task.Run(() => LoadXXAccountAsync());
             }
         }
         showMessagesLoader = false;
         StateHasChanged();
     }
 
-    private (string, string) GetFormattedBalance()
+    private (string, string) GetFormattedBalance(AccountXXNetwork? xxAccount)
     {
         string balancePart1 = "0.00";
         string balancePart2 = "";
