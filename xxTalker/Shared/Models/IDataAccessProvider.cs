@@ -1,9 +1,10 @@
-﻿namespace xxTalker.Shared.Models
+namespace xxTalker.Shared.Models
 {
     public interface IDataAccessProvider
     {
         Task<Talker?> GetTalkerAsync(string accountId);
         Task<List<Talker>> GetTalkersAsync();
+        Task<List<Talker>> GetLastActiveTalkersAsync(int takeNum);
         Task DeleteTalkerAsync(string accountId);
 
 
