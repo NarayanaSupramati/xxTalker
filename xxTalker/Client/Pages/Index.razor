@@ -99,10 +99,10 @@
                         Messages:
                         <MudProgressCircular Color="Color.Secondary" Size="Size.Small" Indeterminate="true" Class="@(showLoader ? "" : "d-none")" Style="height:0.8em;width:0.8em;" />
                         <MudElement HtmlTag="b" Class="@(showLoader ? "d-none" : "")">
-                            @(talker != null && talker.Messages.Any() ? talker.Messages.Count(m => m.MessageType != MessageType.Info) : 0)
+                            @(talker != null ? talker.Messages.Count : 0)
                         </MudElement>
                     </MudText>
-                    <MudText Typo="Typo.body1" Class="@(string.IsNullOrEmpty(talker?.Info) ? "d-none" : "mt-4")">
+                    <MudText Typo="Typo.body1" Class="@(string.IsNullOrEmpty(talker?.Info) ? "d-none" : "mt-3")">
                         <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" Color="Color.Default" Style="vertical-align: text-bottom;" />
                         <Lines InputString="@talker?.Info" />
                     </MudText>
@@ -114,7 +114,6 @@
                             <MudText Typo="Typo.button">@(talker == null || talker.Rating == "0.00" ? "" : talker.Rating)</MudText>
                         </div>
                         <div>
-                            @*<MudIconButton Icon="@Icons.Material.Outlined.Message" Color="Color.Primary" OnClick="GetMessageDialogAsync" />*@
                             <MudButton Variant="Variant.Text" Size="Size.Large" EndIcon="@Icons.Material.Outlined.Message" Color="Color.Primary" OnClick="GetMessageDialogAsync">
                                 Add message
                             </MudButton>
